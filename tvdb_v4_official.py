@@ -82,8 +82,15 @@ class Url:
 
 
 class TVDB:
-    def __init__(self, apikey: str, pin=""):
-        self.url = Url()
+    def __init__(self, apikey, pin, url0=None):
+        """
+        Pass a derived class.
+        """
+        if url0 is None:
+            self.url = Url(url0)
+        else:
+            self.url = url0
+
         login_url = self.url.construct("login")
         self.auth = Auth(login_url, apikey, pin)
         auth_token = self.auth.get_token()

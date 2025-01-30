@@ -1,49 +1,40 @@
-import unittest
-import logging
-
-from tvdb_v5_unofficial import __Id__ as weavesId
-from tvdb_v5_unofficial import TVDB
-from tvdb_v5_unofficial import Config
-
+from unittest.mock import patch, MagicMock
+import pytest
 import json
-import os
+import sys
 
 import pdb
+
+from tvdb_v5_unofficial import TVDB
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
 
-logging.basicConfig(filename='test.log', level=logging.DEBUG)
-logger = logging.getLogger('Test')
-sh = logging.StreamHandler()
-logger.addHandler(sh)
 
-## A test driver for GMus0
-#
-# @see GMus0
-class Test1(unittest.TestCase):
-  """
-  Test
-  """
+@pytest.fixture
+def tvdb_instance():
+    with patch("tvdb_v4_official.Auth") as MockAuth:
+        MockAuth.return_value.get_token.return_value = "test_token"
+        instance = TVDB(config_file="./config.json")
+        return instance
 
-  N = 6
+@patch("urllib.request.urlopen")
+def test_get_artwork(mocked_urlopen, tvdb_instance):
+    mock_response_content = json.dumps(
+        {"status": "success", "data": {"id": 123, "type": "Poster"}, "links": {}}
+    ).encode("utf-8")
 
-  url1="http://lydia.host0"
+    print("message", file=sys.stderr)
 
-  ## Null setup. Create a new one.
-  def setUp(self):
-    logger.info('setup')
-    logger.info(f'test: {self._testMethodName}')
+    mock_response = MagicMock()
+    mock_response.read.return_value = mock_response_content
+    mock_response.__enter__.return_value = mock_response
+    mocked_urlopen.return_value = mock_response
 
-  ## Null setup.
-  def tearDown(self):
-    logger.info('tearDown')
+    artwork = tvdb_instance.get_artwork(123)
+    assert artwork["id"] == 123
+    assert artwork["type"] == "Poster"
 
-  ## Loaded?
-  ## Is utf-8 available as a filesystemencoding()
-  def test_001(self):
-    self.assertIsNotNone(weavesId)
-    logger.info("module: Id: " + weavesId)
 
 
 # -*- coding: utf-8 -*-

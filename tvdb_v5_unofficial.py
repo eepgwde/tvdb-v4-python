@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+
 from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 import pdb
@@ -9,22 +11,25 @@ import pdb
 __Id__ = u"$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
 
 class Url(Url0):
+  base_url = ""
+
   def __init__(self):  # No config_file argument here
-    config = Config.instance().get("url")  # Get the singleton instance
-    base_url = config.get("base_url") or "http://api4.thetvdb.com/v4/"
-    Url0.__init__(self, base_url)
+    url = Config.instance().get("url")  # Get the singleton instance
+    super().__init__()
+    self.base_url = url
 
 
 class TVDB(TVDB0):
   def __init__(self, config_file=None):
     apikey = Config.instance(config_file).get("apikey") 
-    base_url = Config.instance(config_file).get("base_url") 
+    pin = Config.instance(config_file).get("pin", "") 
+    url = Url()
 
-    if not apikey or not base_url:
-      raise ValueError("Missing 'apikey' or 'base_url' in config.")
+    if not apikey or not url:
+      raise ValueError("Missing 'apikey' or 'url' in config.")
 
-    TVDB0.__init__(self, apikey, base_url)
-
+    # TVDB0.__init__(self, apikey, pin)
+    super().__init__(apikey, pin, url)
 
 class Config:
   _instance = None  # Singleton instance
@@ -87,7 +92,7 @@ class Config:
       with open(f0, "r") as f:
         return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
-      print(f"Error file: '{f0}': {e}")
+      print(f"Error file: '{f0}': {e}", file=sys.stderr)
       # pdb.set_trace()
       return None
     except Exception as e:
