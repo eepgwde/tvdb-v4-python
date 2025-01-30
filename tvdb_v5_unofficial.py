@@ -4,11 +4,14 @@ import sys
 
 from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
+from _Lockable import Lockable
+
 import pdb
 
 # Import only Url and TVDB
 
-__Id__ = u"$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
+__Id__ = "$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
+
 
 class Url(Url0):
   base_url = ""
@@ -21,8 +24,8 @@ class Url(Url0):
 
 class TVDB(TVDB0):
   def __init__(self, config_file=None):
-    apikey = Config.instance(config_file).get("apikey") 
-    pin = Config.instance(config_file).get("pin", "") 
+    apikey = Config.instance(config_file).get("apikey")
+    pin = Config.instance(config_file).get("pin", "")
     url = Url()
 
     if not apikey or not url:
@@ -31,22 +34,25 @@ class TVDB(TVDB0):
     # TVDB0.__init__(self, apikey, pin)
     super().__init__(apikey, pin, url)
 
+
+
 class Config:
   _instance = None  # Singleton instance
 
-  defaults0 = { "name": "config.json",
-                "env-var-name": "TVDB_CONFIG",
-                "config-dir": "televida-renomo" }
+  defaults0 = {
+    "name": "config.json",
+    "env-var-name": "TVDB_CONFIG",
+    "config-dir": "televida-renomo",
+  }
 
-  config=None
+  config = None
 
   @classmethod
   def _mkname(cls):
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
-    config_dir = os.path.join(home_dir, ".config",
-                              cls.defaults0["config-dir"])
-    config_file_path = os.path.join(config_dir, cls.defaults0['name'])
-    cls.defaults0['config-path']=config_file_path
+    config_dir = os.path.join(home_dir, ".config", cls.defaults0["config-dir"])
+    config_file_path = os.path.join(config_dir, cls.defaults0["name"])
+    cls.defaults0["config-path"] = config_file_path
     return config_file_path
 
   def __init__(self, config_file=None):
@@ -82,7 +88,7 @@ class Config:
     # Create the instance if it doesn't exist
     return cls._instance
 
-  def _load_file(self, f0 : str):
+  def _load_file(self, f0: str):
     """
     Load a JSON file
     """
@@ -114,22 +120,52 @@ class Config:
       v0 = self._load_file(config_path)
     else:
       # 1. Check for environment variable
-      v0 = self._load_file(os.environ.get(self.defaults0['env-var-name']))
+      v0 = self._load_file(os.environ.get(self.defaults0["env-var-name"]))
       if v0 is None:
         # 2. Check default location ($HOME/.config/tvdb/)
-        v0 = self._load_file(self.defaults0['config-path'])
+        v0 = self._load_file(self.defaults0["config-path"])
 
     if v0 is not None:
       self.config = v0
       return self.config
 
-    raise ValueError("no configuration found: use defaults() for environment and file locations")
-
+    raise ValueError(
+      "no configuration found: use defaults() for environment and file locations"
+    )
 
   def get(self, key, default=None):  # Helper method to access config values
     if self.config:
       return self.config.get(key, default)
     return default
+
+
+class Configuration(Lockable):  
+  def __init__(self, config_file=None):
+    if self._instance is not None:
+      return
+
+    self.config = {}
+    self.factory = ConfigHandlerFactory()  # Create the factory.
+
+    if config_file:
+      self.load_config(config_file)
+
+    self._initialized = True
+
+  def load_config(self, config_file):
+    try:
+      handler = self.factory.get_handler(config_file)  # Get the handler.
+      self.config = handler.load_config(config_file)  # Load the config.
+    except ValueError as e:
+      print(f"Error: {e}")  # Handle unsupported format
+      # Provide default values.
+    except Exception as e:  # Catch other exceptions.
+      print(f"Error loading configuration: {e}")
+
+  def get(self, key, default=None):  # Added default value.
+    with self._lock:
+      return self.config.get(key, default)
+
 
 # -*- coding: utf-8 -*-
 # Local Variables:
