@@ -1,15 +1,6 @@
 from _ConfigHandler import ConfigHandler
 
 class JsonConfigHandler(ConfigHandler):
-    def load_config(self, config_file):
-        try:
-            with open(config_file, 'r') as f:
-                return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error loading JSON config: {e}")
-            return {}
-
-class JsonConfigHandler(ConfigHandler):
   defaults0 = {
     "name": "config.json",
     "env-var-name": "TVDB_CONFIG",

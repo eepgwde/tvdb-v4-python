@@ -12,6 +12,9 @@ class Lockable:
         cls._instance = super().__new__(cls)
       return cls._instance
 
+  def instance(**kwargs):
+    return _instance;
+
 
 # -*- coding: utf-8 -*-
 # Local Variables:
