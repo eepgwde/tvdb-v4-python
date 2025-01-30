@@ -2,6 +2,8 @@ import json
 import os
 from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
+import pdb
+
 # Import only Url and TVDB
 
 __Id__ = u"$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
@@ -22,6 +24,7 @@ class TVDB(TVDB0):
       raise ValueError("Missing 'apikey' or 'base_url' in config.")
 
     TVDB0.__init__(self, apikey, base_url)
+
 
 class Config:
   _instance = None  # Singleton instance
@@ -85,6 +88,7 @@ class Config:
         return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
       print(f"Error file: '{f0}': {e}")
+      # pdb.set_trace()
       return None
     except Exception as e:
       print(f"An unexpected error occurred: {e}")

@@ -54,17 +54,21 @@ class Test1(unittest.TestCase):
     
   ## Should fail with an Exception
   # No configuration given, defaults don't work
+  # @unittest.expectedFailure
   def test_005(self):
     self.assertIsNotNone(weavesId)
+    
     with self.assertRaisesRegex(
         ValueError, "no configuration.+"
       ):
       v0 = Config.instance()
 
+    # v0 = Config.instance()
+
   ## Get configuration items from a local file
   def test_009(self):
     self.assertIsNotNone(weavesId)
-    v0 = Config.instance("./config.json").get("url")
+    v0 = Config.instance("./config.json", reset0=True).get("url")
     self.assertIsNotNone(v0)
     logger.info(f"url: string:  {v0}")
 
@@ -150,6 +154,14 @@ class Test1(unittest.TestCase):
     v0 = Config.instance().get("apikey")
     self.assertIsNotNone(v0)
     logger.info(f"apikey: string:  {v0}")
+
+    v0 = Config.instance().get("pin")
+    self.assertIsNotNone(v0)
+    logger.info(f"pin: string:  {v0}")
+
+    v0 = Config.instance().get("ping")
+    self.assertIsNone(v0)
+    logger.info(f"ping: string:  {v0}")
 
 # -*- coding: utf-8 -*-
 # Local Variables:
