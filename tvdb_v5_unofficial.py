@@ -45,7 +45,7 @@ class Config:
 
   def __init__(self, config_file=None):
     if Config._instance is not None:
-      raise RuntimeError("Call i() instead")
+      raise RuntimeError("Use the instance() method")
     # Enforce singleton
     v0 = Config._mkname()
     self.config = self._load_config(config_file)  # Load config once
@@ -55,17 +55,33 @@ class Config:
   def defaults(cls):
     return cls.defaults0
 
-  @staticmethod
-  def instance(config_file=None):
-    if Config._instance is None:
-      _instance = Config(config_file)
-      # Create the instance if it doesn't exist
-    return Config._instance
+  @classmethod
+  def instance(cls, config_file=None, reset0=False):
+    """
+    Instantiates a configuration that can be interrogated later with get().
+
+    It has a feature that if you call it with a new configuration file as
+    a parameter, it will load that.
+    """
+    if cls._instance is None:
+      Config(config_file)
+    elif config_file is None and reset0:
+      # should read the environment or the default location
+      cls._instance = None
+      Config(config_file)
+    elif config_file is not None:  # should reload
+      cls._instance = None
+      Config(config_file)
+
+    # Create the instance if it doesn't exist
+    return cls._instance
 
   def _load_file(self, f0 : str):
     """
     Load a JSON file
     """
+    if f0 is None:
+      return None
     try:
       with open(f0, "r") as f:
         return json.load(f)
@@ -86,24 +102,22 @@ class Config:
     Returns:
     A dictionary containing the configuration, or None if no config is found.
     """
-
+    v0 = None
     if config_path is not None:
       v0 = self._load_file(config_path)
-      return v0
-            
-    # 1. Check for environment variable
-    v0 = self._load_file(os.environ.get(defaults0['env-var-name']))
+    else:
+      # 1. Check for environment variable
+      v0 = self._load_file(os.environ.get(self.defaults0['env-var-name']))
+      if v0 is None:
+        # 2. Check default location ($HOME/.config/tvdb/)
+        v0 = self._load_file(self.defaults0['config-path'])
+
     if v0 is not None:
       self.config = v0
       return self.config
 
-    # 2. Check default location ($HOME/.config/tvdb/)
-    v0 = self._load_file(os.environ.get(defaults0['config-path']))
-    if v0 is not None:
-      self.config = v0
-      return self.config
+    raise ValueError("no configuration found: use defaults() for environment and file locations")
 
-    return None
 
   def get(self, key, default=None):  # Helper method to access config values
     if self.config:
