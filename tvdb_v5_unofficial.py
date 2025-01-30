@@ -8,22 +8,20 @@ __Id__ = u"$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
 
 class Url(Url0):
   def __init__(self):  # No config_file argument here
-    config = Config.get_instance()  # Get the singleton instance
+    config = Config.instance().get("url")  # Get the singleton instance
     base_url = config.get("base_url") or "http://api4.thetvdb.com/v4/"
-    Url.__init__(self, base_url)
+    Url0.__init__(self, base_url)
 
 
 class TVDB(TVDB0):
-  def __init__(self):  # No config_file argument here
-    config = Config.get_instance()  # Get the singleton instance
-    apikey = config.get("apikey")
-    base_url = config.get("base_url")
+  def __init__(self, config_file=None):
+    apikey = Config.instance(config_file).get("apikey") 
+    base_url = Config.instance(config_file).get("base_url") 
 
     if not apikey or not base_url:
       raise ValueError("Missing 'apikey' or 'base_url' in config.")
 
-    TVDB.__init__(self, apikey, base_url)
-
+    TVDB0.__init__(self, apikey, base_url)
 
 class Config:
   _instance = None  # Singleton instance

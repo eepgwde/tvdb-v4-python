@@ -1,4 +1,5 @@
 { 
   "url": "https://api4.thetvdb.com/v4/", 
-  "apikey": "787f25b1-55fa-4666-9faf-3ccf2e1e3027" 
+  "apikey": "787f25b1-55fa-4666-9faf-3ccf2e1e3027",
+  "pin": ""
 }
