@@ -32,20 +32,22 @@ class Config:
                 "env-var-name": "TVDB_CONFIG",
                 "config-dir": "televida-renomo" }
 
+  config=None
+
   @classmethod
   def _mkname(cls):
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
     config_dir = os.path.join(home_dir, ".config",
                               cls.defaults0["config-dir"])
-    config_file_path = os.path.join(config_dir, Config.defaults0['name'])
-    defaults0['config-path']=config_file_path
+    config_file_path = os.path.join(config_dir, cls.defaults0['name'])
+    cls.defaults0['config-path']=config_file_path
     return config_file_path
 
   def __init__(self, config_file=None):
     if Config._instance is not None:
       raise RuntimeError("Call i() instead")
     # Enforce singleton
-    v0 = self._mkname()
+    v0 = Config._mkname()
     self.config = self._load_config(config_file)  # Load config once
     Config._instance = self  # Set the instance
 
@@ -54,25 +56,27 @@ class Config:
     return cls.defaults0
 
   @staticmethod
-  def i(config_file=None):
+  def instance(config_file=None):
     if Config._instance is None:
-      Config(config_file)  # Create the instance if it doesn't exist
-      return Config._instance
+      _instance = Config(config_file)
+      # Create the instance if it doesn't exist
+    return Config._instance
 
-  def _load_config(f0 : str):
+  def _load_file(self, f0 : str):
+    """
+    Load a JSON file
+    """
     try:
-        with open(f0, "r") as f:
-          return json.load(f)
+      with open(f0, "r") as f:
+        return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
-      print(
-        f"Error loading config '{f0}': {e}"
-      )
-      # Fallback to default location
+      print(f"Error file: '{f0}': {e}")
+      return None
     except Exception as e:
       print(f"An unexpected error occurred: {e}")
       return None
 
-  def load_config(default_config_file=None):
+  def _load_config(self, config_path=None):
     """Loads configuration, prioritizing environment variable
     then default location.
     Args:
@@ -83,34 +87,28 @@ class Config:
     A dictionary containing the configuration, or None if no config is found.
     """
 
+    if config_path is not None:
+      v0 = self._load_file(config_path)
+      return v0
+            
     # 1. Check for environment variable
-    v0 = _load_config(os.environ.get(default1))
+    v0 = self._load_file(os.environ.get(defaults0['env-var-name']))
     if v0 is not None:
-      ## stash and return
-      return
+      self.config = v0
+      return self.config
 
     # 2. Check default location ($HOME/.config/tvdb/)
-    home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
-    config_dir = os.path.join(home_dir, ".config", default2)
-    config_file_path = os.path.join(config_dir, default_config_file)
+    v0 = self._load_file(os.environ.get(defaults0['config-path']))
+    if v0 is not None:
+      self.config = v0
+      return self.config
 
-    try:
-      with open(config_file_path, "r") as f:
-        return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-      print(
-        f"Error loading config from default location '{config_file_path}': {e}"
-      )
-      return None  # Return None if no config is found
-    except Exception as e:
-      print(f"An unexpected error occurred: {e}")
-      return None
+    return None
 
-    def get(self, key, default=None):  # Helper method to access config values
-      if self.config:
-        return self.config.get(key, default)
-      return default
-
+  def get(self, key, default=None):  # Helper method to access config values
+    if self.config:
+      return self.config.get(key, default)
+    return default
 
 # -*- coding: utf-8 -*-
 # Local Variables:
