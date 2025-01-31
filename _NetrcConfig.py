@@ -16,6 +16,8 @@ class NetrcConfigHandler(ConfigHandler):
         "config_dir": os.path.expanduser("~")
     }
 
+    kwargs = {}
+
     def _mkname(self):
         config_file_path = os.path.join(
             self.defaults0["config_dir"],
@@ -24,7 +26,13 @@ class NetrcConfigHandler(ConfigHandler):
         return config_file_path
 
     def __init__(self, **kwargs):
+        """Initialize a handler.
+
+        If defaults0 is passed as a keyword, it will not load a config file,
+        but just call _mkname to update the defaults0 dictionary.
+        """
         self._mkname()
+        self.kwargs = kwargs
         if "defaults0" in kwargs:
             return
         self.load_config(**kwargs)
@@ -34,14 +42,14 @@ class NetrcConfigHandler(ConfigHandler):
         if "env0" in kwargs:
             f0 = os.environ.get(kwargs["env0"], None)
             if f0 is None:
-                raise NameError(f"No environment variable: {kwargs["env0"]}")
+                raise NameError(f"No environment variable for env0: {kwargs["env0"]}")
 
             try:
                 self.netrc0 = netrc.netrc(f0)
                 return self.netrc0
             except (FileNotFoundError, netrc.NetrcParseError) as e:
                 print(f"Error loading .netrc config: {f0} {e}", file=sys.stderr)
-                return {}
+                return None
 
         # Should load the default
         try:
@@ -49,7 +57,7 @@ class NetrcConfigHandler(ConfigHandler):
             return self.netrc0
         except (FileNotFoundError, netrc.NetrcParseError) as e:
             print(f"Error loading .netrc config: {e}", file=sys.stderr)
-            return {}
+            return None
 
     def _host0(self, **kwargs):
         """
@@ -68,7 +76,7 @@ class NetrcConfigHandler(ConfigHandler):
 
     def _host1(self, **kwargs):
         """
-        Priority and construction
+        Priority is from kwargs and then environment.
         """
         h0 = self._host0(**kwargs)
         if h0 is None:
@@ -76,6 +84,9 @@ class NetrcConfigHandler(ConfigHandler):
         return h0
 
     def get(self, key, default0=None, **kwargs):
+
+        kwargs = kwargs | self.kwargs
+
         if key == "url":
             h0 = self._host1(**kwargs)
             if h0 is None:

@@ -114,13 +114,14 @@ class Test4(unittest.TestCase):
   def test_017(self):
     """
     This should access the file in ~/.netrc
+
+    The keywords are cached in the instance when handler is called.
     """
     self.assertIsNotNone(weavesId)
     if "TVDB_CONFIG" in os.environ:
       del os.environ["TVDB_CONFIG"]
 
     os.environ["TVDB_MACHINE"]="api4.thetvdb.com"
-
     v0 = Config.handler(env1="TVDB_MACHINE")
     self.assertIsNotNone(v0)
     apikey = v0.get("apikey")
