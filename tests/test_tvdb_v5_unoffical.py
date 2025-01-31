@@ -64,20 +64,15 @@ class Test1(unittest.TestCase):
   def test_005(self):
     """Should fail with an Exception
 
-    Without changing HOME, it may find your ~/.netrc
+    Without changing HOME, it may find your ~/.netrc, so this test changes HOME to TMPDIR.
 
-    For the test method, there is an alternative configuration using expected failure"""
+    But, you may have to clear the environment if you default assignments to the env0 in defaults().
+
+    If it is too difficult, you can disable the test altogeter expected failure - called config a in the source code comments."""
     self.assertIsNotNone(weavesId)
 
     home0 = os.environ["HOME"]
     os.environ["HOME"] = os.environ["TMPDIR"]
-
-    # v0 = Config.handler()
-    # self.assertIsNone(v0)
-
-    # logger.info(f"handler: ConfigHandler: {v0}")
-    # if v0 is not None:
-    #   logger.info(f"handler: class: {v0.__class__.__name__}")
 
     ## not a - comment this if you use config a
     Pdb0().trap0 = 6
@@ -89,7 +84,7 @@ class Test1(unittest.TestCase):
     os.environ["HOME"] = home0
 
     ## a
-    # v0 = Config.instance()
+    # v0 = Config.handler()
 
   def test_009(self):
     """Get configuration items from a local file
