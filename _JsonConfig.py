@@ -8,10 +8,12 @@ class JsonConfigHandler(ConfigHandler):
   defaults0 = {
     "name": "config.json",
     "env0": "TVDB_CONFIG",
-    "config_dir": "televida-renomo",
+    "config_dir": "televida-renomo"
+    # config_file is added by _mkname
   }
 
-  config = None
+  _config = None
+  kwargs = {}
 
   def _mkname(self):
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
@@ -23,10 +25,10 @@ class JsonConfigHandler(ConfigHandler):
   # if defaults0 is passed just revise the defaults0
   def __init__(self, **kwargs):
     self._mkname()
+    self.kwargs = kwargs
     if "defaults0" in kwargs:
       return
-    self.load_config(**kwargs)
-
+    self._config = self.load_config(**kwargs)
 
   def _load_file(self, f0: str):
     """
@@ -56,6 +58,7 @@ class JsonConfigHandler(ConfigHandler):
     A dictionary containing the configuration, or None if no config is found.
     """
     config_file = None
+    # 1. check for a named env0 pointing to a file in the keywords
     if "env0" in kwargs:
         config_file = os.environ.get(kwargs["env0"], None)
         if config_file is None:
@@ -65,23 +68,28 @@ class JsonConfigHandler(ConfigHandler):
             raise NameError(f"No file at environment variable: {kwargs["env0"]}={config_file}")
         return v0
 
-    v0 = self._load_file(os.environ.get(self.defaults0["env-var-name"]))
-    if v0 is None:
-        # 2. Check default location ($HOME/.config/tvdb/)
-        v0 = self._load_file(self.defaults0["config-path"])
+    # 2. check for a named config file in the keywords
+    if "config_file" in kwargs:
+        config_file = kwargs["config_file"]
+        v0 = self._load_file(config_file)
+        if v0 is None:
+            raise ValueError(f"no configuration: bad ${config_file}")
+        return v0
+
+
+    # 3. Check default location ($HOME/.config/tvdb/)
+    v0 = self._load_file(self.defaults0["config_file"])
 
     if v0 is not None:
-        self.config = v0
-        return self.config
+        return v0
 
     raise ValueError(
       "no configuration found: use defaults() for environment and file locations"
     )
 
   def get(self, key, default0=None, **kwargs):  # Helper method to access config values
-    if self.config:
-      return self.config.get(key, default)
-    return default
+    assert self._config is not None, f"no _config in {self.__class__.name}"
+    return self._config.get(key, default0)
 
   @classmethod
   def defaults(cls, defaults0=None):
