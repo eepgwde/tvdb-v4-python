@@ -41,6 +41,14 @@ class Test4(unittest.TestCase):
   def test_003(self):
     self.assertIsNotNone(weavesId)
     pdb.set_trace()
+    v0 = Config.defaults()
+    self.assertIsNotNone(v0)
+    logger.info(f"defaults: {v0}")
+
+  ## A JSON instance using an environment variable.
+  def test_005(self):
+    self.assertIsNotNone(weavesId)
+    pdb.set_trace()
     v0 = Config.instance(env0="TVDB_CONFIG").defaults()
     self.assertIsNotNone(v0)
     logger.info(f"defaults: {v0}")

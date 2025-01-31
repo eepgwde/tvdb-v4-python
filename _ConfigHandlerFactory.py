@@ -8,8 +8,11 @@ class ConfigHandlerFactory:
 
     def get_defaults(self, **kwargs):
         """Returns the defaults for each class."""
+        r0 = {}
         for cls in self.clss:
-            cls.defaults()
+            r0[cls.__name__] = cls.defaults()
+
+        return r0
 
     def get_handler(self, **kwargs):
         """Returns the appropriate config handler based on the file extension."""

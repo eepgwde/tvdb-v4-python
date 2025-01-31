@@ -88,7 +88,8 @@ class Config:
 
   @classmethod
   def defaults(cls, **kwargs):
-    return cls._instance.factor.get_defaults(kwargs)
+    factory = ConfigHandlerFactory()  # Create the factory.
+    return factory.get_defaults(**kwargs)
 
   @classmethod
   def _load_config(cls, **kwargs):

@@ -4,8 +4,8 @@ import os
 class JsonConfigHandler(ConfigHandler):
   defaults0 = {
     "name": "config.json",
-    "env-var-name": "TVDB_CONFIG",
-    "config-dir": "televida-renomo",
+    "env0": "TVDB_CONFIG",
+    "config_dir": "televida-renomo",
   }
 
   config = None
@@ -13,13 +13,13 @@ class JsonConfigHandler(ConfigHandler):
   @classmethod
   def _mkname(cls):
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
-    config_dir = os.path.join(home_dir, ".config", cls.defaults0["config-dir"])
+    config_dir = os.path.join(home_dir, ".config", cls.defaults0["config_dir"])
     config_file_path = os.path.join(config_dir, cls.defaults0["name"])
-    cls.defaults0["config-path"] = config_file_path
+    cls.defaults0["config_file"] = config_file_path
     return config_file_path
 
   def __init__(self, **kwargs):
-    v0 = self._mkname()
+    self._mkname()
 
   def _load_file(self, f0: str):
     """
@@ -71,8 +71,10 @@ class JsonConfigHandler(ConfigHandler):
       return self.config.get(key, default)
     return default
 
-  def defaults(self, defaults0=None):
-    return defaults0
+  @classmethod
+  def defaults(cls, defaults0=None):
+    v0 = JsonConfigHandler()
+    return v0.defaults0
 
 
 # -*- coding: utf-8 -*-
