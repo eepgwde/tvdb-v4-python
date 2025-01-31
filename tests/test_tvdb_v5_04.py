@@ -22,6 +22,8 @@ class Test4(unittest.TestCase):
   Test
   """
 
+  _netrc0 = "tests/home0/netrc"
+
   ## Null setup. Create a new one.
   def setUp(self):
     logger.info('setup')
@@ -105,7 +107,7 @@ class Test4(unittest.TestCase):
   ## Only the NETRC should pass
   def test_009(self):
     self.assertIsNotNone(weavesId)
-    os.environ["TVDB_CONFIG"]="./netrc"
+    os.environ["TVDB_CONFIG"]=self._netrc0
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
@@ -114,7 +116,7 @@ class Test4(unittest.TestCase):
   # or a machine.
   def test_011(self):
     self.assertIsNotNone(weavesId)
-    os.environ["TVDB_CONFIG"]="./netrc"
+    os.environ["TVDB_CONFIG"]=self._netrc0
     v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
     self.assertIsNotNone(v0)
     url = v0.get("url", env0="TVDB_CONFIG", env1="TVDB_MACHINE")
@@ -124,7 +126,7 @@ class Test4(unittest.TestCase):
   ## Get a machine URL, keyword
   def test_013(self):
     self.assertIsNotNone(weavesId)
-    os.environ["TVDB_CONFIG"]="./netrc"
+    os.environ["TVDB_CONFIG"]=self._netrc0
     v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
     self.assertIsNotNone(v0)
     url = v0.get("url", machine="api5.olympic.host0")
@@ -133,7 +135,7 @@ class Test4(unittest.TestCase):
 
   def test_015(self):
     self.assertIsNotNone(weavesId)
-    os.environ["TVDB_CONFIG"]="./netrc"
+    os.environ["TVDB_CONFIG"]=self._netrc0
     v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
     self.assertIsNotNone(v0)
     apikey = v0.get("apikey", machine="api5.olympic.host0")
