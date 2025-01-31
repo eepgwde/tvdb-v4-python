@@ -40,18 +40,35 @@ class Test4(unittest.TestCase):
   ## Defaults
   def test_003(self):
     self.assertIsNotNone(weavesId)
-    pdb.set_trace()
     v0 = Config.defaults()
     self.assertIsNotNone(v0)
     logger.info(f"defaults: {v0}")
 
-  ## A JSON instance using an environment variable.
+  ## Both config handlers should fail
   def test_005(self):
     self.assertIsNotNone(weavesId)
-    pdb.set_trace()
-    v0 = Config.instance(env0="TVDB_CONFIG").defaults()
+    if "TVDB_CONFIG" in os.environ:
+      del os.environ["TVDB_CONFIG"]
+
+    v0 = Config.instance(env0="TVDB_CONFIG")
+    self.assertIsNone(v0)
+    logger.info(f"configHandler: {v0}")
+
+  ## Only the JSON should pass
+  def test_007(self):
+    self.assertIsNotNone(weavesId)
+    os.environ["TVDB_CONFIG"]="./config.json"
+    v0 = Config.instance(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
-    logger.info(f"defaults: {v0}")
+    logger.info(f"configHandler: {v0}")
+
+  ## Only the NETRC should pass
+  def test_009(self):
+    self.assertIsNotNone(weavesId)
+    os.environ["TVDB_CONFIG"]="./netrc"
+    v0 = Config.instance(env0="TVDB_CONFIG")
+    self.assertIsNotNone(v0)
+    logger.info(f"configHandler: {v0}")
 
 
 # -*- coding: utf-8 -*-

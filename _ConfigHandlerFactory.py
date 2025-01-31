@@ -14,9 +14,7 @@ class ConfigHandlerFactory:
 
         return r0
 
-    def get_handler(self, **kwargs):
-        """Returns the appropriate config handler based on the file extension."""
-
+    def try0(self, **kwargs):
         for cls in self.clss:
             try:
                 instance = cls(**kwargs) 
@@ -25,5 +23,35 @@ class ConfigHandlerFactory:
                 print(f"Failed to create instance of {cls.__name__}: {e}")
                 continue
         # end of loop
-        raise Exception("Failed to create an instance of any class in the list.") 
+        return None
 
+    def get_handler(self, **kwargs):
+        """Returns the appropriate config handler based on keywords
+
+        It first tries two overrides passed in the keywords.
+        
+         - env0 an environment variable
+         - config_file is a path to a file
+
+        These can be found from the defaults() method for the Config class.
+
+        If env0 is set, try and load using that, and return None if
+        it fails.
+        
+        If config_file is set, try and load using that and return None
+        if it fails.
+
+        If neither env0 nor config_file was set, it tries to load using
+        the defaults and returns the first one that succeeds.
+
+        The order that is tried is given by the Config::defaults() 
+        """
+        v0 = None
+        if "env0" in kwargs:
+            return self.try0(env0=kwargs["env0"])
+        if "config_file" in kwargs:
+            return self.try0(config_file=kwargs["config_file"])
+        v0 = self.try0(kwargs)
+        if v0 is None:
+            raise Exception("Failed to create a config handler.")
+        return v0

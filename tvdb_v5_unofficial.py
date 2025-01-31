@@ -61,10 +61,10 @@ class Config:
     # Enforce singleton
     self.factory = ConfigHandlerFactory()  # Create the factory.
     self.kwargs = kwargs
-    self._instance = self  # Set the instance
+    Config._instance = self  # Set the class instance
 
   @classmethod
-  def instance(cls, **kwargs):
+  def instance(cls, **kwargs): 
     """
     Instantiates a configuration that can be interrogated later with get().
 
@@ -73,18 +73,11 @@ class Config:
     which if true will cause the handler to be created from the keyword
     arguments.
 
-    Normally, it would return the handler it last created.
     """
-    reset0 = False
-    if "reset0" in kwargs:
-      reset0 = kwargs["reset0"]
-
     # Create the instance if it doesn't exist
-    if cls._instance is None or reset0:
+    if cls._instance is None:
       cls._instance = Config(**kwargs)
-      cls._instance.handler = cls._load_config(**kwargs)
-
-    return cls._instance.handler
+    return cls._instance._load_config(**kwargs)
 
   @classmethod
   def defaults(cls, **kwargs):

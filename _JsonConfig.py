@@ -10,16 +10,20 @@ class JsonConfigHandler(ConfigHandler):
 
   config = None
 
-  @classmethod
-  def _mkname(cls):
+  def _mkname(self):
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
-    config_dir = os.path.join(home_dir, ".config", cls.defaults0["config_dir"])
-    config_file_path = os.path.join(config_dir, cls.defaults0["name"])
-    cls.defaults0["config_file"] = config_file_path
+    config_dir = os.path.join(home_dir, ".config", self.defaults0["config_dir"])
+    config_file_path = os.path.join(config_dir, self.defaults0["name"])
+    self.defaults0["config_file"] = config_file_path
     return config_file_path
 
+  # if defaults0 is passed just revise the defaults0
   def __init__(self, **kwargs):
     self._mkname()
+    if "defaults0" in kwargs:
+      return
+    self.load_config(**kwargs)
+
 
   def _load_file(self, f0: str):
     """
@@ -38,7 +42,7 @@ class JsonConfigHandler(ConfigHandler):
       print(f"An unexpected error occurred: {e}")
       return None
 
-  def load_config(self, config_file=None):
+  def load_config(self, **kwargs):
     """Loads configuration, prioritizing environment variable
     then default location.
     Args:
@@ -48,19 +52,24 @@ class JsonConfigHandler(ConfigHandler):
     Returns:
     A dictionary containing the configuration, or None if no config is found.
     """
-    v0 = None
-    if config_path is not None:
-      v0 = self._load_file(config_path)
-    else:
-      # 1. Check for environment variable
-      v0 = self._load_file(os.environ.get(self.defaults0["env-var-name"]))
-      if v0 is None:
+    config_file = None
+    if "env0" in kwargs:
+        config_file = os.environ.get(kwargs["env0"], None)
+        if config_file is None:
+            raise NameError(f"No environment variable: {kwargs["env0"]}")
+        v0 = self._load_file(config_file)
+        if v0 is None:
+            raise NameError(f"No file at environment variable: {kwargs["env0"]}={config_file}")
+        return v0
+
+    v0 = self._load_file(os.environ.get(self.defaults0["env-var-name"]))
+    if v0 is None:
         # 2. Check default location ($HOME/.config/tvdb/)
         v0 = self._load_file(self.defaults0["config-path"])
 
     if v0 is not None:
-      self.config = v0
-      return self.config
+        self.config = v0
+        return self.config
 
     raise ValueError(
       "no configuration found: use defaults() for environment and file locations"
@@ -73,7 +82,7 @@ class JsonConfigHandler(ConfigHandler):
 
   @classmethod
   def defaults(cls, defaults0=None):
-    v0 = JsonConfigHandler()
+    v0 = JsonConfigHandler(defaults0=None)
     return v0.defaults0
 
 
