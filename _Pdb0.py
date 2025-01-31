@@ -19,9 +19,13 @@ class Pdb0():
   """
   # invisible attribute,  set by __new__
   # _instance = None
+
+  # this isn't used, but may need to be invisible.
   _lock = threading.Lock()
 
   _trap0s = _Defaults().trap0s
+
+  _disabled0 = False
 
   # def __new__(cls):
   #   if not hasattr(cls, '_instance'):
@@ -47,7 +51,18 @@ class Pdb0():
       o0._trap0s = cls._trap0s 
     return cls._instance
 
-  ## remember to access these by the instance()
+  ## Beware how invoked
+  # Remember to access these by the instance()
+  # Or use the newer Pdb0()
+
+
+  @property
+  def disabled0(self):
+    return self._disabled0
+
+  @disabled0.setter
+  def disabled0(self, value):
+    self._disabled0 = bool(value)
 
   @property
   def trap0(self):
@@ -70,6 +85,9 @@ class Pdb0():
     """
     if self.trap0 is None:
       return
+
+    if self.disabled0:
+      return 
 
     if int(value) in self.trap0:
       pdb.set_trace()

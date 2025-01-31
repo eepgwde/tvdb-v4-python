@@ -38,6 +38,7 @@ class Test1(unittest.TestCase):
   def setUp(self):
     logger.info('setup')
     logger.info(f'test: {self._testMethodName}')
+    Pdb0().disabled0 = True
 
   ## Null setup.
   def tearDown(self):
@@ -81,7 +82,7 @@ class Test1(unittest.TestCase):
       ):
       v0 = Config.handler()
 
-    Pbd0().reset()
+    Pdb0().reset0()
     os.environ["HOME"] = home0
 
     ## a
