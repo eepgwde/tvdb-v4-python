@@ -55,6 +55,8 @@ class Test4(unittest.TestCase):
     logger.info(f"configHandler: {v0}")
 
   ## Only the JSON should pass
+  # Use the instance itself as an unsafe hacker's
+  # cache.
   def test_007(self):
     self.assertIsNotNone(weavesId)
     os.environ["TVDB_CONFIG"]="./config.json"
@@ -63,6 +65,7 @@ class Test4(unittest.TestCase):
     logger.info(f"configHandler: {v0}")
     Config.instance().kwargs["jsonHandler"]=v0
 
+  ## Check the unsafe hacker's cache works.
   def test_008(self):
     self.assertIsNotNone(weavesId)
     v0 = Config.instance().kwargs["jsonHandler"]
@@ -77,6 +80,52 @@ class Test4(unittest.TestCase):
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
+
+  ## Get the URL, needs an environment variable.
+  # or a machine.
+  def test_011(self):
+    self.assertIsNotNone(weavesId)
+    os.environ["TVDB_CONFIG"]="./netrc"
+    v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
+    self.assertIsNotNone(v0)
+    url = v0.get("url", env0="TVDB_CONFIG", env1="TVDB_MACHINE")
+    self.assertIsNone(url)
+    logger.info(f"configHandler: {v0}; url: {url}")
+
+  ## Get a machine URL, keyword
+  def test_013(self):
+    self.assertIsNotNone(weavesId)
+    os.environ["TVDB_CONFIG"]="./netrc"
+    v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
+    self.assertIsNotNone(v0)
+    url = v0.get("url", machine="api5.olympic.host0")
+    self.assertIsNotNone(v0)
+    logger.info(f"configHandler: {v0}; url: {url}")
+
+  def test_015(self):
+    self.assertIsNotNone(weavesId)
+    os.environ["TVDB_CONFIG"]="./netrc"
+    v0 = Config.handler(env0="TVDB_CONFIG", env1="TVDB_MACHINE")
+    self.assertIsNotNone(v0)
+    apikey = v0.get("apikey", machine="api5.olympic.host0")
+    self.assertIsNotNone(v0)
+    logger.info(f"configHandler: {v0}; apikey: {apikey}")
+
+  def test_017(self):
+    """
+    This should access the file in ~/.netrc
+    """
+    self.assertIsNotNone(weavesId)
+    if "TVDB_CONFIG" in os.environ:
+      del os.environ["TVDB_CONFIG"]
+
+    os.environ["TVDB_MACHINE"]="api4.thetvdb.com"
+
+    v0 = Config.handler(env1="TVDB_MACHINE")
+    self.assertIsNotNone(v0)
+    apikey = v0.get("apikey")
+    self.assertIsNotNone(v0)
+    logger.info(f"configHandler: {v0}; apikey: {apikey}")
 
 
 # -*- coding: utf-8 -*-

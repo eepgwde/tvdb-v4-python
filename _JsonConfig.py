@@ -75,7 +75,7 @@ class JsonConfigHandler(ConfigHandler):
       "no configuration found: use defaults() for environment and file locations"
     )
 
-  def get(self, key, default=None, **kwargs):  # Helper method to access config values
+  def get(self, key, default0=None, **kwargs):  # Helper method to access config values
     if self.config:
       return self.config.get(key, default)
     return default

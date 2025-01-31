@@ -2,6 +2,8 @@ import netrc
 import os
 import sys
 
+import pdb
+
 from _ConfigHandler import ConfigHandler
 
 class NetrcConfigHandler(ConfigHandler):
@@ -34,16 +36,71 @@ class NetrcConfigHandler(ConfigHandler):
             if f0 is None:
                 raise NameError(f"No environment variable: {kwargs["env0"]}")
 
+            try:
+                self.netrc0 = netrc.netrc(f0)
+                return self.netrc0
+            except (FileNotFoundError, netrc.NetrcParseError) as e:
+                print(f"Error loading .netrc config: {f0} {e}", file=sys.stderr)
+                return {}
+
+        # Should load the default
         try:
             self.netrc0 = netrc.netrc()
             return self.netrc0
-
         except (FileNotFoundError, netrc.NetrcParseError) as e:
             print(f"Error loading .netrc config: {e}", file=sys.stderr)
             return {}
 
-    def get(self, default0=None, **kwargs):
-        return
+    def _host0(self, **kwargs):
+        """
+        A machine is needed, can be a keyword.
+        """
+        return kwargs.get("machine", None)
+
+    def _env0(self, **kwargs):
+        """
+        A NETRC machine is needed from the environment
+        """
+        if not "env1" in kwargs:
+             return None
+        h0 = os.environ.get(kwargs["env1"], None)
+        return h0
+
+    def _host1(self, **kwargs):
+        """
+        Priority and construction
+        """
+        h0 = self._host0(**kwargs)
+        if h0 is None:
+            h0 = self._env0(**kwargs)
+        return h0
+
+    def get(self, key, default0=None, **kwargs):
+        if key == "url":
+            h0 = self._host1(**kwargs)
+            if h0 is None:
+                return default0
+            return f"http://{h0}/"
+
+        # login, account, password
+
+        h0 = self._host1(**kwargs)
+        if h0 is None:
+            return default0
+        a1 = self.netrc0.authenticators(h0)
+        if a1 is None:
+            return default0
+
+        if key == "user":
+            return a1[0] # the login is usually a e-mail or user-name
+
+        if key == "apikey":
+            return a1[1] # the account is used for the API key
+
+        if key == "pin": 
+            return a1[2] # the password is usually blank
+
+        return default0
 
     @classmethod
     def defaults(cls, defaults0=None):
