@@ -1,5 +1,6 @@
 import netrc
 import os
+import sys
 
 from _ConfigHandler import ConfigHandler
 
@@ -9,6 +10,7 @@ class NetrcConfigHandler(ConfigHandler):
     defaults0 = {
         "name": ".netrc",
         "env0": "NETRC",
+        "env1": "NETRC_MACHINE",
         "config_dir": os.path.expanduser("~")
     }
 
@@ -37,7 +39,7 @@ class NetrcConfigHandler(ConfigHandler):
             return self.netrc0
 
         except (FileNotFoundError, netrc.NetrcParseError) as e:
-            print(f"Error loading .netrc config: {e}")
+            print(f"Error loading .netrc config: {e}", file=sys.stderr)
             return {}
 
     def get(self, default0=None, **kwargs):

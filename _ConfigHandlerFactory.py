@@ -51,7 +51,7 @@ class ConfigHandlerFactory:
             return self.try0(env0=kwargs["env0"])
         if "config_file" in kwargs:
             return self.try0(config_file=kwargs["config_file"])
-        v0 = self.try0(kwargs)
+        v0 = self.try0(**kwargs)
         if v0 is None:
             raise Exception("Failed to create a config handler.")
         return v0

@@ -50,7 +50,7 @@ class Test4(unittest.TestCase):
     if "TVDB_CONFIG" in os.environ:
       del os.environ["TVDB_CONFIG"]
 
-    v0 = Config.instance(env0="TVDB_CONFIG")
+    v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNone(v0)
     logger.info(f"configHandler: {v0}")
 
@@ -58,15 +58,23 @@ class Test4(unittest.TestCase):
   def test_007(self):
     self.assertIsNotNone(weavesId)
     os.environ["TVDB_CONFIG"]="./config.json"
-    v0 = Config.instance(env0="TVDB_CONFIG")
+    v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
+    Config.instance().kwargs["jsonHandler"]=v0
+
+  def test_008(self):
+    self.assertIsNotNone(weavesId)
+    v0 = Config.instance().kwargs["jsonHandler"]
+    self.assertIsNotNone(v0)
+    logger.info(f"configHandler: {v0}")
+
 
   ## Only the NETRC should pass
   def test_009(self):
     self.assertIsNotNone(weavesId)
     os.environ["TVDB_CONFIG"]="./netrc"
-    v0 = Config.instance(env0="TVDB_CONFIG")
+    v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
 

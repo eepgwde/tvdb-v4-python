@@ -64,25 +64,26 @@ class Config:
     Config._instance = self  # Set the class instance
 
   @classmethod
-  def instance(cls, **kwargs): 
+  def defaults(cls, **kwargs):
+    """This is not an instance method."""
+    factory = ConfigHandlerFactory()  # Create the factory.
+    return factory.get_defaults(**kwargs)
+
+  @classmethod
+  def handler(cls, **kwargs): 
     """
     Instantiates a configuration that can be interrogated later with get().
 
-    It has a feature that if you call it with a new configuration file as
-    a parameter, it will load that. Or you can use the reset0 parameter
-    which if true will cause the handler to be created from the keyword
-    arguments.
+    The handler is created everytime given the kwargs passed to it.
 
     """
-    # Create the instance if it doesn't exist
-    if cls._instance is None:
-      cls._instance = Config(**kwargs)
-    return cls._instance._load_config(**kwargs)
+    return cls.instance()._load_config(**kwargs)
 
   @classmethod
-  def defaults(cls, **kwargs):
-    factory = ConfigHandlerFactory()  # Create the factory.
-    return factory.get_defaults(**kwargs)
+  def instance(cls, **kwargs):
+    if cls._instance is None:
+      cls._instance = Config(**kwargs)
+    return cls._instance
 
   @classmethod
   def _load_config(cls, **kwargs):
@@ -90,10 +91,10 @@ class Config:
     try:
       handler = cls._instance.factory.get_handler(**kwargs)  # Get the handler.
     except ValueError as e:
-      print(f"Error: {e}")  # Handle unsupported format
+      print(f"Error: {e}", file=sys.stderr)  # Handle unsupported format
       # Provide default values.
     except Exception as e:  # Catch other exceptions.
-      print(f"Error loading configuration: {e}")
+      print(f"Error loading configuration: {e}", file=sys.stderr)
 
     return handler
 
