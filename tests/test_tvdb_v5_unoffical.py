@@ -81,6 +81,7 @@ class Test1(unittest.TestCase):
       ):
       v0 = Config.handler()
 
+    Pbd0().reset()
     os.environ["HOME"] = home0
 
     ## a

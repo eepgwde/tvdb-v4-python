@@ -44,15 +44,44 @@ class Test4(unittest.TestCase):
     self.assertIsNotNone(v0)
     logger.info(f"defaults: {v0}")
 
-  ## Both config handlers should fail
   def test_005(self):
+    """
+    Test if we fail correctly.
+
+    Change HOME temporarily to use TMPDIR
+    And unset the environment.
+    """
     self.assertIsNotNone(weavesId)
+
+    home0 = os.environ["HOME"]
+    os.environ["HOME"] = os.environ["TMPDIR"]
+
     if "TVDB_CONFIG" in os.environ:
       del os.environ["TVDB_CONFIG"]
 
-    v0 = Config.handler(env0="TVDB_CONFIG")
+    v0 = None
+
+    ## no configurations available
+    with self.assertRaisesRegex(
+        ValueError, "no configuration: .+"
+      ):
+      v0 = Config.handler()
+
+    ## bad configuration passed
+    with self.assertRaisesRegex(
+        ValueError, "no configuration: .+"
+      ):
+      v0 = Config.handler(env0="TVDB_CONFIG")
+
+    ## bad configuration passed
+    with self.assertRaisesRegex(
+        ValueError, "no configuration: .+"
+      ):
+      v0 = Config.handler(config_file="nothere.json")
+
     self.assertIsNone(v0)
-    logger.info(f"configHandler: {v0}")
+    logger.info(f"configHandler: should be None: {v0}")
+    os.environ["HOME"] = home0
 
   ## Only the JSON should pass
   # Use the instance itself as an unsafe hacker's
@@ -60,7 +89,6 @@ class Test4(unittest.TestCase):
   def test_007(self):
     self.assertIsNotNone(weavesId)
     os.environ["TVDB_CONFIG"]="./config.json"
-    pdb.set_trace()
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
