@@ -4,6 +4,9 @@ import os
 import sys
 import json
 
+import pdb
+from _Pdb0 import Pdb0
+
 class JsonConfigHandler(ConfigHandler):
   defaults0 = {
     "name": "config.json",
@@ -57,6 +60,7 @@ class JsonConfigHandler(ConfigHandler):
     Returns:
     A dictionary containing the configuration, or None if no config is found.
     """
+    Pdb0().trap1 = 5
     config_file = None
     # 1. check for a named env0 pointing to a file in the keywords
     if "env0" in kwargs:
@@ -92,8 +96,11 @@ class JsonConfigHandler(ConfigHandler):
     return self._config.get(key, default0)
 
   @classmethod
-  def defaults(cls, defaults0=None):
-    v0 = JsonConfigHandler(defaults0=None)
+  def defaults(cls, **kwargs):
+    if not "defaults0" in kwargs:
+        kwargs["defaults0"]=None
+
+    v0 = JsonConfigHandler(**kwargs)
     return v0.defaults0
 
 

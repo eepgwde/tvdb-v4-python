@@ -2,6 +2,7 @@ import netrc
 import os
 import sys
 
+from _Pdb0 import Pdb0
 import pdb
 
 from _ConfigHandler import ConfigHandler
@@ -44,6 +45,7 @@ class NetrcConfigHandler(ConfigHandler):
 
         Throws exceptions if there are failures.
         """
+        Pdb0().trap1 = 5
         if "env0" in kwargs:
             f0 = os.environ.get(kwargs["env0"], None)
             if f0 is None:
@@ -109,6 +111,9 @@ class NetrcConfigHandler(ConfigHandler):
         return default0
 
     @classmethod
-    def defaults(cls, defaults0=None):
-        v0 = NetrcConfigHandler()
+    def defaults(cls, **kwargs):
+        if not "defaults0" in kwargs:
+            kwargs["defaults0"]=None
+
+        v0 = NetrcConfigHandler(**kwargs)
         return v0.defaults0

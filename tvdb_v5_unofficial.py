@@ -6,6 +6,8 @@ from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 from _ConfigHandlerFactory import ConfigHandlerFactory
 
+from _Pdb0 import Pdb0
+
 import pdb
 
 # Import only Url and TVDB
@@ -88,13 +90,13 @@ class Config:
   @classmethod
   def _load_config(cls, **kwargs):
     handler = None
+    Pdb0().trap1 = 6
     try:
       handler = cls._instance.factory.get_handler(**kwargs)  # Get the handler.
     except ValueError as e:
-      print(f"Error: {e}", file=sys.stderr)  # Handle unsupported format
-      # Provide default values.
+      raise
     except Exception as e:  # Catch other exceptions.
-      print(f"Error loading configuration: {e}", file=sys.stderr)
+      raise ValueError(f"no configuration: unexpected {e}")
 
     return handler
 

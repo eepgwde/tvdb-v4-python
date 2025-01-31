@@ -63,6 +63,11 @@ class Pdb0():
 
   @trap1.setter
   def trap1(self, value):
+    """
+    When the value is in trap0s it halts under the debugger.
+
+    You need to do a pdb up command to get back to you r code.
+    """
     if self.trap0 is None:
       return
 

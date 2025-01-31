@@ -8,6 +8,8 @@ from tvdb_v5_unofficial import Config
 import json
 import os
 
+from _Pdb0 import Pdb0
+
 import pdb
 
 VALID_API_KEY = "valid_api_key"
@@ -68,7 +70,7 @@ class Test1(unittest.TestCase):
     self.assertIsNotNone(weavesId)
 
     home0 = os.environ["HOME"]
-    os.environ["HOME"] = os.environ["PWD"]
+    os.environ["HOME"] = os.environ["TMPDIR"]
 
     # v0 = Config.handler()
     # self.assertIsNone(v0)
@@ -78,10 +80,13 @@ class Test1(unittest.TestCase):
     #   logger.info(f"handler: class: {v0.__class__.__name__}")
 
     ## not a - comment this if you use config a
+    Pdb0().trap0 = 6
     with self.assertRaisesRegex(
         ValueError, "no configuration: .+"
       ):
       v0 = Config.handler()
+
+    os.environ["HOME"] = home0
 
     ## a
     # v0 = Config.instance()
