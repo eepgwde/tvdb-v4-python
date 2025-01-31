@@ -60,6 +60,7 @@ class Test4(unittest.TestCase):
   def test_007(self):
     self.assertIsNotNone(weavesId)
     os.environ["TVDB_CONFIG"]="./config.json"
+    pdb.set_trace()
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")

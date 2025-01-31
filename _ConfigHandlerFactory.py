@@ -20,10 +20,11 @@ class ConfigHandlerFactory:
                 instance = cls(**kwargs) 
                 return instance
             except Exception as e:
-                print(f"Failed to create instance of {cls.__name__}: {e}")
+                # print(f"no configuration: failed to create instance of {cls.__name__}: {e}", file=sys.stderr)
                 continue
         # end of loop
-        return None
+
+        raise ValueError(f"no configuration: no classes could instantiate: {self.clss}")
 
     def get_handler(self, **kwargs):
         """Returns the appropriate config handler based on keywords
@@ -44,7 +45,7 @@ class ConfigHandlerFactory:
         If neither env0 nor config_file was set, it tries to load using
         the defaults and returns the first one that succeeds.
 
-        The order that is tried is given by the Config::defaults() 
+        The order of the handlers is tried is given by the Config::defaults() 
         """
         v0 = None
         if "env0" in kwargs:
@@ -52,6 +53,4 @@ class ConfigHandlerFactory:
         if "config_file" in kwargs:
             return self.try0(config_file=kwargs["config_file"])
         v0 = self.try0(**kwargs)
-        if v0 is None:
-            raise Exception("Failed to create a config handler.")
         return v0

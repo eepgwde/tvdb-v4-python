@@ -39,25 +39,20 @@ class NetrcConfigHandler(ConfigHandler):
 
 
     def load_config(self, **kwargs):
+        """
+        load from the env0 first, else try the default.
+
+        Throws exceptions if there are failures.
+        """
         if "env0" in kwargs:
             f0 = os.environ.get(kwargs["env0"], None)
             if f0 is None:
                 raise NameError(f"No environment variable for env0: {kwargs["env0"]}")
-
-            try:
-                self.netrc0 = netrc.netrc(f0)
-                return self.netrc0
-            except (FileNotFoundError, netrc.NetrcParseError) as e:
-                print(f"Error loading .netrc config: {f0} {e}", file=sys.stderr)
-                return None
-
-        # Should load the default
-        try:
-            self.netrc0 = netrc.netrc()
+            self.netrc0 = netrc.netrc(f0)
             return self.netrc0
-        except (FileNotFoundError, netrc.NetrcParseError) as e:
-            print(f"Error loading .netrc config: {e}", file=sys.stderr)
-            return None
+
+        self.netrc0 = netrc.netrc()
+        return self.netrc0
 
     def _host0(self, **kwargs):
         """

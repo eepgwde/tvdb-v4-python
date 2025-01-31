@@ -70,16 +70,18 @@ class Test1(unittest.TestCase):
     home0 = os.environ["HOME"]
     os.environ["HOME"] = os.environ["PWD"]
 
-    v0 = Config.handler()
-    logger.info(f"handler: ConfigHandler:  {v0}")
-    if v0 is not None:
-      logger.info(f"handler: class: {v0.__class__.__name__}")
+    # v0 = Config.handler()
+    # self.assertIsNone(v0)
+
+    # logger.info(f"handler: ConfigHandler: {v0}")
+    # if v0 is not None:
+    #   logger.info(f"handler: class: {v0.__class__.__name__}")
 
     ## not a - comment this if you use config a
-    # with self.assertRaisesRegex(
-    #     ValueError, "no configuration.+"
-    #   ):
-    #   v0 = Config.handler()
+    with self.assertRaisesRegex(
+        ValueError, "no configuration: .+"
+      ):
+      v0 = Config.handler()
 
     ## a
     # v0 = Config.instance()
