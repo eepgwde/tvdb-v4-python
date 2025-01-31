@@ -4,9 +4,7 @@ import sys
 
 from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
-from _Lockable import Lockable
-from _ConfigHandler import ConfigHandler
-
+from _ConfigHandlerFactory import ConfigHandlerFactory
 
 import pdb
 
@@ -37,10 +35,25 @@ class TVDB(TVDB0):
     super().__init__(apikey, pin, url)
 
 class Config:
+  """This is a factory implemented as a Singleton.
+
+  The instance() method returns a Handler for a type of configuration file. The
+  config handlers each take a turn to parse the keyword arguments and return a
+  handler.
+
+  Usually, you only need one configuration handler, but you can reset the
+  Singleton and load a second handler.
+
+  The handlers will persist, so you can create a JSON one or a Netrc one
+  as needed.
+
+  """
+
   config={}
   factory=None
   handler=None
   kwargs={}
+  _instance=None
 
   def __init__(self, **kwargs):
     if Config._instance is not None:
@@ -48,7 +61,7 @@ class Config:
     # Enforce singleton
     self.factory = ConfigHandlerFactory(**kwargs)  # Create the factory.
     self.kwargs = kwargs
-    Config._instance = self  # Set the instance
+    self._instance = self  # Set the instance
 
   @classmethod
   def instance(cls, **kwargs):
@@ -56,7 +69,11 @@ class Config:
     Instantiates a configuration that can be interrogated later with get().
 
     It has a feature that if you call it with a new configuration file as
-    a parameter, it will load that.
+    a parameter, it will load that. Or you can use the reset0 parameter
+    which if true will cause the handler to be created from the keyword
+    arguments.
+
+    Normally, it would return the handler it last created.
     """
     reset0 = False
     if "reset0" in kwargs:
@@ -64,11 +81,14 @@ class Config:
 
     # Create the instance if it doesn't exist
     if cls._instance is None or reset0:
-      cls._instance.handler = _load_config(**kwargs)
+      Config(**kwargs)
+      cls._instance.handler = cls._load_config(**kwargs)
 
     return cls._instance.handler
 
+  @classmethod
   def _load_config(self, **kwargs):
+    pdb.set_trace()
     handler = None
     try:
       handler = self.factory.get_handler(**kwargs)  # Get the handler.
@@ -79,17 +99,6 @@ class Config:
       print(f"Error loading configuration: {e}")
 
     return handler
-
-
-
-
-
-
-
-
-
-
-
 
 # -*- coding: utf-8 -*-
 # Local Variables:
