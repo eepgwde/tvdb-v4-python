@@ -4,7 +4,7 @@ from _NetrcConfig import NetrcConfigHandler
 import pdb
 
 class ConfigHandlerFactory:
-    clss = (NetrcConfigHandler, JsonConfigHandler)
+    clss = (JsonConfigHandler, NetrcConfigHandler)
 
     def get_defaults(self, **kwargs):
         """Returns the defaults for each class."""

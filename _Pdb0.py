@@ -1,14 +1,8 @@
+from _Defaults import Defaults0
+
 import pdb
 
 import threading
-
-class _Defaults:
-
-  _trap0s = set((1,2,3,4))
-
-  @property
-  def trap0s(self):
-    return self._trap0s.copy()
 
 class Pdb0():
   """
@@ -23,7 +17,7 @@ class Pdb0():
   # this isn't used, but may need to be invisible.
   _lock = threading.Lock()
 
-  _trap0s = _Defaults().trap0s
+  _trap0s = Defaults0().trap0s
 
   _disabled0 = False
 
@@ -97,7 +91,7 @@ class Pdb0():
       self._trap0s = set(kwargs["trap0s"])
       return
 
-    self._trap0s = _Defaults().trap0s
+    self._trap0s = Defaults0().trap0s
 
 # -*- coding: utf-8 -*-
 # Local Variables:

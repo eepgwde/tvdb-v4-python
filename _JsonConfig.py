@@ -41,13 +41,14 @@ class JsonConfigHandler(ConfigHandler):
       return None
     try:
       with open(f0, "r") as f:
-        return json.load(f)
+        self._config = json.load(f)
+        return self._config
     except (FileNotFoundError, json.JSONDecodeError) as e:
-      print(f"Error file: '{f0}': {e}", file=sys.stderr)
+      # print(f"Error file: '{f0}': {e}", file=sys.stderr)
       # pdb.set_trace()
       return None
     except Exception as e:
-      print(f"An unexpected error occurred: {e}")
+      print(f"An unexpected error occurred: {e}", file=sys.stderr)
       return None
 
   def load_config(self, **kwargs):
@@ -79,7 +80,6 @@ class JsonConfigHandler(ConfigHandler):
         if v0 is None:
             raise ValueError(f"no configuration: bad ${config_file}")
         return v0
-
 
     # 3. Check default location ($HOME/.config/tvdb/)
     v0 = self._load_file(self.defaults0["config_file"])

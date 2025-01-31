@@ -38,7 +38,7 @@ class Test1(unittest.TestCase):
   def setUp(self):
     logger.info('setup')
     logger.info(f'test: {self._testMethodName}')
-    Pdb0().disabled0 = True
+    Pdb0().disabled0 = False
 
   ## Null setup.
   def tearDown(self):
@@ -75,8 +75,8 @@ class Test1(unittest.TestCase):
     home0 = os.environ["HOME"]
     os.environ["HOME"] = os.environ["TMPDIR"]
 
+    # Pdb0().trap0 = 6
     ## not a - comment this if you use config a
-    Pdb0().trap0 = 6
     with self.assertRaisesRegex(
         ValueError, "no configuration: .+"
       ):
@@ -93,10 +93,20 @@ class Test1(unittest.TestCase):
     and cache the handler in the instance.
 
     The keyword arguments will be cached in the handler
+    Avoid Netrc configuration by changing HOME
     """
     self.assertIsNotNone(weavesId)
-    v0 = Config.handler(config_file="./config.json")
+
+    f0 = os.path.abspath("./config.json")
+
+    home0 = os.environ["HOME"]
+    os.environ["HOME"] = os.environ["TMPDIR"]
+
+    # Pdb0().trap0 = 6
+    v0 = Config.handler(config_file=f0)
     self.assertIsNotNone(v0)
+
+    os.environ["HOME"] = home0
 
     v1 = v0.get("url")
     self.assertIsNotNone(v0)
@@ -146,7 +156,10 @@ class Test1(unittest.TestCase):
     logger.info(f"apikey: string:  {v1}")
 
   def test_015(self):
-    """access via an alternative env0"""
+    """access via an alternative env0
+
+    Avoid the netrc config by changing HOME
+    """
     self.assertIsNotNone(weavesId)
 
     # This doesn't work
@@ -159,22 +172,33 @@ class Test1(unittest.TestCase):
 
     self.assertIsNone(os.environ.get(v0))
 
-    os.environ[v0] = "./config2.json"
+    os.environ[v0] = os.path.abspath("./config2.json")
 
-    v1 = Config.handler(env0=v0).get("url")
+    home0 = os.environ["HOME"]
+    os.environ["HOME"] = os.environ["TMPDIR"]
+
+    # Pdb0().trap0 = 6
+    v0 = Config.handler(env0=v0)
+    self.assertIsNotNone(v0)
+
+    v1 = v0.get("url")
     self.assertIsNotNone(v1)
     logger.info(f"url: string:  {v1}")
 
-    v1 = Config.handler().get("apikey")
+    v1 = v0.get("apikey")
     self.assertIsNotNone(v1)
     logger.info(f"apikey: string:  {v1}")
 
-    v1 = Config.handler().get("pin")
+    v1 = v0.get("pin")
     self.assertIsNotNone(v1)
     logger.info(f"pin: string:  {v1}")
 
+    v1 = v0.get("ping")
+    self.assertIsNone(v1)
+    logger.info(f"ping: None:  {v1}")
+
   def test_017(self):
-    """Test the default location.
+    """Test the default JSON location.
 
     This test changes HOME to be the PWD, which is the source directory, and
     there is a .config/ in the source directory and a visible link as a
@@ -185,6 +209,34 @@ class Test1(unittest.TestCase):
     os.environ["HOME"] = os.environ["PWD"]
     v0 = Config.handler()
     self.assertIsNotNone(v0)
+    v1 = v0.get("url")
+    self.assertIsNotNone(v0)
+    logger.info(f"url: string:  {v1}")
+
+    v1 = v0.get("apikey")
+    self.assertIsNotNone(v1)
+    logger.info(f"apikey: string:  {v1}")
+
+    v1 = v0.get("pin")
+    self.assertIsNotNone(v1)
+    logger.info(f"pin: string:  {v1}")
+
+    v1 = v0.get("ping")
+    self.assertIsNone(v1)
+    logger.info(f"ping: string:  {v1}")
+
+  def test_019(self):
+    """Test the default NETRC location.
+
+    This test changes HOME to a test directory PWD, which is this file's source directory
+    """
+    self.assertIsNotNone(weavesId)
+
+    Pdb0().trap0 = 6
+    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    v0 = Config.handler()
+    self.assertIsNotNone(v0)
+
     v1 = v0.get("url")
     self.assertIsNotNone(v0)
     logger.info(f"url: string:  {v1}")
