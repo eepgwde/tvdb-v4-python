@@ -6,6 +6,11 @@ import pdb
 class ConfigHandlerFactory:
     clss = (NetrcConfigHandler, JsonConfigHandler)
 
+    def get_defaults(self, **kwargs):
+        """Returns the defaults for each class."""
+        for cls in self.clss:
+            cls.defaults()
+
     def get_handler(self, **kwargs):
         """Returns the appropriate config handler based on the file extension."""
 

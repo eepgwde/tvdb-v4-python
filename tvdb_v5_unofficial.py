@@ -87,8 +87,11 @@ class Config:
     return cls._instance.handler
 
   @classmethod
+  def defaults(cls, **kwargs):
+    return cls._instance.factor.get_defaults(kwargs)
+
+  @classmethod
   def _load_config(cls, **kwargs):
-    pdb.set_trace()
     handler = None
     try:
       handler = cls._instance.factory.get_handler(**kwargs)  # Get the handler.

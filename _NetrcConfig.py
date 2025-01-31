@@ -20,7 +20,8 @@ class NetrcConfigHandler(ConfigHandler):
     def get(self, default0=None, **kwargs):
         return
 
-    def defaults(self, defaults0=None):
+    @classmethod
+    def defaults(cls, defaults0=None):
         return defaults0
 
 
