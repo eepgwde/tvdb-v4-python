@@ -1,4 +1,5 @@
 from _ConfigHandler import ConfigHandler
+import os
 
 class JsonConfigHandler(ConfigHandler):
   defaults0 = {
@@ -17,13 +18,8 @@ class JsonConfigHandler(ConfigHandler):
     cls.defaults0["config-path"] = config_file_path
     return config_file_path
 
-  def __init__(self, config_file=None):
-    if Config._instance is not None:
-      raise RuntimeError("Use the instance() method")
-    # Enforce singleton
-    v0 = Config._mkname()
-    self.config = self._load_config(config_file)  # Load config once
-    Config._instance = self  # Set the instance
+  def __init__(self, **kwargs):
+    v0 = self._mkname()
 
   def _load_file(self, f0: str):
     """
@@ -70,10 +66,14 @@ class JsonConfigHandler(ConfigHandler):
       "no configuration found: use defaults() for environment and file locations"
     )
 
-  def get(self, key, default=None):  # Helper method to access config values
+  def get(self, key, default=None, **kwargs):  # Helper method to access config values
     if self.config:
       return self.config.get(key, default)
     return default
+
+  def defaults(self, defaults0=None):
+    return defaults0
+
 
 # -*- coding: utf-8 -*-
 # Local Variables:

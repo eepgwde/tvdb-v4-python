@@ -59,7 +59,7 @@ class Config:
     if Config._instance is not None:
       raise RuntimeError("Use the instance() method")
     # Enforce singleton
-    self.factory = ConfigHandlerFactory(**kwargs)  # Create the factory.
+    self.factory = ConfigHandlerFactory()  # Create the factory.
     self.kwargs = kwargs
     self._instance = self  # Set the instance
 
@@ -81,17 +81,17 @@ class Config:
 
     # Create the instance if it doesn't exist
     if cls._instance is None or reset0:
-      Config(**kwargs)
+      cls._instance = Config(**kwargs)
       cls._instance.handler = cls._load_config(**kwargs)
 
     return cls._instance.handler
 
   @classmethod
-  def _load_config(self, **kwargs):
+  def _load_config(cls, **kwargs):
     pdb.set_trace()
     handler = None
     try:
-      handler = self.factory.get_handler(**kwargs)  # Get the handler.
+      handler = cls._instance.factory.get_handler(**kwargs)  # Get the handler.
     except ValueError as e:
       print(f"Error: {e}")  # Handle unsupported format
       # Provide default values.

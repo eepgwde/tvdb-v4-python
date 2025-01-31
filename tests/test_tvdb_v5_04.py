@@ -4,7 +4,7 @@ import tempfile
 import pickle
 
 from tvdb_v5_unofficial import __Id__ as weavesId
-# from tvdb_v5_unofficial import Config
+from tvdb_v5_unofficial import Config
 
 import json
 import os
@@ -37,7 +37,6 @@ class Test4(unittest.TestCase):
     self.assertIsNotNone(weavesId)
     logger.info("module: Id: " + weavesId)
 
-        raise ValueError("Unsupported configuration format.")
   ## Defaults
   def test_003(self):
     self.assertIsNotNone(weavesId)
@@ -45,7 +44,7 @@ class Test4(unittest.TestCase):
     v0 = Config.instance(env0="TVDB_CONFIG").defaults()
     self.assertIsNotNone(v0)
     logger.info(f"defaults: {v0}")
-    
+
 
 # -*- coding: utf-8 -*-
 # Local Variables:

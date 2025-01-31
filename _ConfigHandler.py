@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
 class ConfigHandler(ABC):
+
     @abstractmethod
-    def load_config(self, config_file=None):
+    def load_config(self, **kwargs):
         """
         Loads configuration data from the specified file.
 

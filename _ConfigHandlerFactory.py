@@ -9,7 +9,7 @@ class ConfigHandlerFactory:
     def get_handler(self, **kwargs):
         """Returns the appropriate config handler based on the file extension."""
 
-        for cls in self.class_list:
+        for cls in self.clss:
             try:
                 instance = cls(**kwargs) 
                 return instance
