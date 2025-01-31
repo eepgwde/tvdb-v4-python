@@ -3,7 +3,12 @@ import pdb
 import threading
 
 class _Defaults:
-  trap0s_default = set((1,2,3,4))
+
+  _trap0s = set((1,2,3,4))
+
+  @property
+  def trap0s(self):
+    return self._trap0s.copy()
 
 class Pdb0():
   """
@@ -16,7 +21,7 @@ class Pdb0():
   # _instance = None
   _lock = threading.Lock()
 
-  _trap0s = _Defaults.trap0s_default
+  _trap0s = _Defaults().trap0s
 
   # def __new__(cls):
   #   if not hasattr(cls, '_instance'):
@@ -27,21 +32,19 @@ class Pdb0():
     if not hasattr(cls, '_instance'):
       o0 = super(Pdb0, cls).__new__(cls, **kwargs)
       cls._instance = o0
-      o0.__dict__ = cls._trap0s 
+      o0._trap0s = cls._trap0s 
 
     return cls._instance
 
   def __init__(self, **kwargs):
-    if Pdb0._instance is not None:
-      raise RuntimeError("Use the instance() method")
-    self._trap0s = set(trap0s)
-    Pdb0._instance = self  # Set the cls.instance
+    pass
 
   @classmethod
   def instance(cls, **kwargs):
     if not hasattr(cls, '_instance'):
       o0 = super(Pdb0, cls).__new__(cls, **kwargs)
       cls._instance = o0
+      o0._trap0s = cls._trap0s 
     return cls._instance
 
   ## remember to access these by the instance()
@@ -65,6 +68,13 @@ class Pdb0():
 
     if int(value) in self.trap0:
       pdb.set_trace()
+
+  def reset0(self, **kwargs):
+    if "trap0s" in kwargs:
+      self._trap0s = set(kwargs["trap0s"])
+      return
+
+    self._trap0s = _Defaults().trap0s
 
 # -*- coding: utf-8 -*-
 # Local Variables:
