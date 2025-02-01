@@ -20,7 +20,7 @@ class Defaults0:
   @property
   def host0(self):
     """
-    Use a property to perform a string clone.
+    Use a property and perform a string clone.
     """
     return ''.join(self._tvdb_host)
 

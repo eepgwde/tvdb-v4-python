@@ -10,8 +10,6 @@ import os
 
 from _Pdb0 import Pdb0
 
-import pdb
-
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
 
@@ -228,30 +226,153 @@ class Test1(unittest.TestCase):
   def test_019(self):
     """Test the default NETRC location.
 
-    This test changes HOME to a test directory PWD, which is this file's source directory
+    This test changes HOME to a test directory PWD, which is this file's source directory.
+
+    It manages to update get a handler, but without a machine name, it can't provide anything.
     """
     self.assertIsNotNone(weavesId)
 
-    Pdb0().trap0 = 6
+    # Pdb0().trap0 = 6
     os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 
     v1 = v0.get("url")
-    self.assertIsNotNone(v0)
-    logger.info(f"url: string:  {v1}")
+    self.assertIsNone(v1)
+    logger.info(f"url: string: {v1}")
 
     v1 = v0.get("apikey")
-    self.assertIsNotNone(v1)
-    logger.info(f"apikey: string:  {v1}")
+    self.assertIsNone(v1)
+    logger.info(f"apikey: string: {v1}")
 
     v1 = v0.get("pin")
-    self.assertIsNotNone(v1)
-    logger.info(f"pin: string:  {v1}")
+    self.assertIsNone(v1)
+    logger.info(f"pin: string: {v1}")
 
     v1 = v0.get("ping")
     self.assertIsNone(v1)
     logger.info(f"ping: string:  {v1}")
+
+  def test_021(self):
+    """Test the default NETRC location.
+
+    This test changes HOME to a test directory PWD, which is this file's source directory.
+
+    It manages to get a handler, then interrogates for the defaults and uses the one it finds.
+    """
+    self.assertIsNotNone(weavesId)
+
+    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    v0 = Config.handler()
+    self.assertIsNotNone(v0)
+
+    v1 = v0.defaults()
+    logger.info(f"handler: {v0.__class__.__name__}; defaults: : {v1}")
+    self.assertIsNotNone(v1)
+
+    h0 = v1.get("machine", None)
+    self.assertIsNotNone(h0)
+
+    v1 = v0.get("url", machine=h0)
+    self.assertIsNotNone(v1)
+    logger.info(f"url: machine: {h0}; string: {v1}")
+
+    v1 = v0.get("apikey", machine=h0)
+    self.assertIsNotNone(v1)
+    logger.info(f"apikey: string: {v1}")
+
+    v1 = v0.get("pin", machine=h0)
+    self.assertIsNotNone(v1)
+    logger.info(f"pin: string: {v1}")
+
+    v1 = v0.get("ping", machine=h0)
+    self.assertIsNone(v1)
+    logger.info(f"ping: None: {v1}")
+
+  def test_023(self):
+    """Test the default NETRC location.
+
+    This test changes HOME to a test directory PWD, which is this file's source directory.
+
+    It manages to get a handler, then interrogates for the default. It then constructs the handler again passing the machine name as a keyword to the Config.handler factory method.
+    """
+    self.assertIsNotNone(weavesId)
+
+    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    v0 = Config.handler()
+    self.assertIsNotNone(v0)
+
+    v1 = v0.defaults()
+    logger.info(f"handler: {v0.__class__.__name__}; defaults: : {v1}")
+    self.assertIsNotNone(v1)
+
+    h0 = v1.get("machine", None)
+    self.assertIsNotNone(h0)
+
+    # Once you have the default, rebuild the handler
+    # but pass the machine this time.
+
+    v0 = Config.handler(machine=h0)
+
+    v1 = v0.get("url")
+    self.assertIsNotNone(v1)
+    logger.info(f"url: machine: {h0}; string: {v1}")
+
+    v1 = v0.get("apikey")
+    self.assertIsNotNone(v1)
+    logger.info(f"apikey: string: {v1}")
+
+    v1 = v0.get("pin")
+    self.assertIsNotNone(v1)
+    logger.info(f"pin: string: {v1}")
+
+    v1 = v0.get("ping")
+    self.assertIsNone(v1)
+    logger.info(f"ping: None: {v1}")
+
+  def test_025(self):
+    """Test the default NETRC location.
+
+    This test changes HOME to a test directory PWD, which is this file's source directory.
+
+    This uses the environment variable. The default is the name given by env1.
+    """
+    self.assertIsNotNone(weavesId)
+
+    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    v0 = Config.handler()
+    self.assertIsNotNone(v0)
+
+    v1 = v0.defaults()
+    logger.info(f"handler: {v0.__class__.__name__}; defaults: : {v1}")
+    self.assertIsNotNone(v1)
+
+    env1 = v1.get("env1", None)
+    self.assertIsNotNone(env1)
+
+    h0 = "api5.olympic.host0"
+    os.environ[env1] = h0
+
+    # Once you have the default, rebuild the handler
+    # but pass the machine this time.
+
+    v0 = Config.handler()
+
+    v1 = v0.get("url")
+    self.assertIsNotNone(v1)
+    logger.info(f"url: machine: {h0}; string: {v1}")
+
+    v1 = v0.get("apikey")
+    self.assertIsNotNone(v1)
+    logger.info(f"apikey: string: {v1}")
+
+    v1 = v0.get("pin")
+    self.assertIsNotNone(v1)
+    logger.info(f"pin: string: {v1}")
+
+    v1 = v0.get("ping")
+    self.assertIsNone(v1)
+    logger.info(f"ping: None: {v1}")
 
 # -*- coding: utf-8 -*-
 # Local Variables:

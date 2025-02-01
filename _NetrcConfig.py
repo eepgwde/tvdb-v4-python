@@ -3,7 +3,7 @@ import os
 import sys
 
 from _Pdb0 import Pdb0
-import pdb
+from _Defaults import Defaults0
 
 from _ConfigHandler import ConfigHandler
 
@@ -14,7 +14,8 @@ class NetrcConfigHandler(ConfigHandler):
         "name": ".netrc",
         "env0": "NETRC",
         "env1": "NETRC_MACHINE",
-        "config_dir": os.path.expanduser("~")
+        "config_dir": os.path.expanduser("~"),
+        "machine": Defaults0().host0
     }
 
     kwargs = {}
@@ -62,6 +63,12 @@ class NetrcConfigHandler(ConfigHandler):
         """
         return kwargs.get("machine", None)
 
+    def _def0(self, **kwargs):
+        """
+        A machine is needed, can be the default
+        """
+        return kwargs.get("machine", None)
+
     def _env0(self, **kwargs):
         """
         A NETRC machine is needed from the environment
@@ -71,13 +78,25 @@ class NetrcConfigHandler(ConfigHandler):
         h0 = os.environ.get(kwargs["env1"], None)
         return h0
 
+    def _env00(self, **kwargs):
+        """
+        A NETRC machine is needed from the environment
+        """
+        v0 = self.defaults0.get("env1", None)
+        assert v0 is not None, "defaults0 has no env1 environment variable name"
+        h0 = os.environ.get(v0, None)
+        return h0
+
     def _host1(self, **kwargs):
         """
-        Priority is from kwargs and then environment.
+        Priority is from kwargs and then environment using keyword env1
+        Then from environment using defaults0:env1
         """
         h0 = self._host0(**kwargs)
         if h0 is None:
             h0 = self._env0(**kwargs)
+        if h0 is None:
+            h0 = self._env00(**kwargs)
         return h0
 
     def get(self, key, default0=None, **kwargs):
