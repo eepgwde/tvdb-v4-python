@@ -14,6 +14,22 @@ class ConfigHandlerFactory:
 
         return r0
 
+    def get_defaults_run(self, **kwargs):
+        """Returns the runtime defaults that can be used to instantiate."""
+        r0 = {}
+        for cls in self.clss:
+            r0[cls.__name__] = cls.get_default()
+
+        if "key0" in kwargs:
+            key0 = kwargs["key0"]
+            f0 = lambda x: key0 in x.lower()
+            v1 = next(filter(f0, r0.keys()))
+            if v1 is None:
+                return None
+            r0 = r0[v1]
+
+        return r0
+
     def try0(self, **kwargs):
         for cls in self.clss:
             try:

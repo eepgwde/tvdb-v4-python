@@ -39,6 +39,11 @@ class NetrcConfigHandler(ConfigHandler):
             return
         self.load_config(**kwargs)
 
+    @classmethod
+    def get_default(cls, **kwargs):
+        v0 = cls.defaults0["config_file"]
+        v1 = cls.defaults0["machine"]
+        return { "config_file": v0, "machine": v1 }
 
     def load_config(self, **kwargs):
         """

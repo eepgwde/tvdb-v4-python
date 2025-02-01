@@ -33,6 +33,11 @@ class JsonConfigHandler(ConfigHandler):
       return
     self._config = self.load_config(**kwargs)
 
+  @classmethod
+  def get_default(cls, **kwargs):
+    v0 = cls.defaults0["config_file"]
+    return { "config_file": v0 }
+
   def _load_file(self, f0: str):
     """
     Load a JSON file
@@ -40,7 +45,7 @@ class JsonConfigHandler(ConfigHandler):
     if f0 is None:
       return None
 
-    if not self._hasTyper({ "config_file" : f0, "config_type=" : ".json" }):
+    if not self._hasTyper({ "config_file" : f0, "config_type" : ".json" }):
       return None
 
     try:

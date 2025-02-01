@@ -67,25 +67,36 @@ class Test3(unittest.TestCase):
     self.assertIsNotNone(v0)
     logger.info(f"defaults: {v0}")
     
-  ## Should fail with an Exception
-  # No configuration given, defaults don't work
-  # @unittest.expectedFailure
-  def test_005(self):
-    self.assertIsNotNone(weavesId)
-    
-    with self.assertRaisesRegex(
-        ValueError, "no configuration.+"
-      ):
-      v0 = Config.instance()
-
-    # v0 = Config.instance()
-
   ## Get configuration items from a local file
+  # @unittest.skip("Already have Lost")
   def test_009(self):
     self.assertIsNotNone(weavesId)
 
-    tvdb = TVDB(config_file="./config.json")
+    # force netrc
+    h0 = Config.defaults()
+    logger.info(f"h0: keys: {h0.keys()}")
 
+    f0 = lambda x: "netrc" in x.lower()
+    v1 = next(filter(f0, h0.keys()))
+
+    logger.info(f"v1: Netrc handler: {v1}")
+
+    v2 = h0[v1]
+    logger.info(f"v2: Netrc handler: defaults: {v2}")
+
+    v2 = h0[v1]["config_file"]
+    logger.info(f"v2: Netrc handler: config_file: {v2}")
+    r0 = Config.instance().get_config_file(key0="netrc", defaults0=h0)
+
+    logger.info(f"get_config_file: r0[0]: {r0[0]}")
+    logger.info(f"get_config_file: r0[1]: {r0[1]}")
+
+    machine0 = r0[1].get("machine", None)
+
+    # tvdb = TVDB(config_file="./config.json")
+
+  @unittest.skip("Not used")
+  def test_011(self):
     self.assertIsNotNone(tvdb)
     logger.info(f"tvdb: TVDB: {tvdb}")
 

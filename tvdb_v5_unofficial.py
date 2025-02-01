@@ -6,6 +6,8 @@ from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 from _ConfigHandlerFactory import ConfigHandlerFactory
 
+from _ConfigHandler import ConfigHandler
+
 from _Pdb0 import Pdb0
 
 import pdb
@@ -18,23 +20,27 @@ __Id__ = "$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
 class Url(Url0):
   base_url = ""
 
-  def __init__(self):  # No config_file argument here
-    url = Config.handler0.get("url")  # Get the singleton instance
+  def __init__(self, config_file=None):
+    configuror = Config.instance().get_configuror(config_file=config_file)
+    configuror.get("url")
+
     super().__init__()
     self.base_url = url
 
 
 class TVDB(TVDB0):
+
   def __init__(self, config_file=None):
-    config0 = Config.handler0.get("apikey")
-    apikey = Config.handler0.get("apikey")
-    pin = Config.handler0.get("pin", "")
-    url = Url()
+    """Polymorphic parameter in config_file"""
+    configuror = Config.instance().get_configuror(config_file=config_file)
+
+    apikey = configuror.get("apikey")
+    pin = configuror.get("pin", "")
+    url = Url(config_file=configuror)
 
     if not apikey or not url:
       raise ValueError("Missing 'apikey' or 'url' in config.")
 
-    # TVDB0.__init__(self, apikey, pin)
     super().__init__(apikey, pin, url)
 
 class Config:
@@ -88,6 +94,32 @@ class Config:
   def handler0(self):
     """Retrieve the last handler built."""
     return self._handler0
+
+  def get_configuror(self, config_file=None):
+    configuror = None
+    if isinstance(config_file, ConfigHandler):
+      configuror = config_file
+    elif isinstance(config_file, str):
+      configuror = Config.handler(config_file=config_file)
+
+    if configuror is None:
+      configuror = Config.instance().handler0()
+
+    assert configuror is not None, "null configuror"
+
+    return configuror
+
+  def get_config_file(self, key0="none", defaults0=None):
+    if defaults0 is None:
+      defaults0 = self.defaults()
+
+    f0 = lambda x: key0 in x.lower()
+    v1 = next(filter(f0, defaults0.keys()))
+    if v1 is None:
+      return None
+
+    v2 = defaults0[v1]["config_file"]
+    return (v2, defaults0[v1])
 
   @classmethod
   def instance(cls, **kwargs):
