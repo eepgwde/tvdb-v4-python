@@ -39,6 +39,10 @@ class JsonConfigHandler(ConfigHandler):
     """
     if f0 is None:
       return None
+
+    if not self._hasTyper({ "config_file" : f0, "config_type=" : ".json" }):
+      return None
+
     try:
       with open(f0, "r") as f:
         self._config = json.load(f)

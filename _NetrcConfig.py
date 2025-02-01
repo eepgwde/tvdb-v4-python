@@ -51,11 +51,22 @@ class NetrcConfigHandler(ConfigHandler):
             f0 = os.environ.get(kwargs["env0"], None)
             if f0 is None:
                 raise NameError(f"No environment variable for env0: {kwargs["env0"]}")
+            kwargs0 = kwargs | self.tag0(f0, "netrc")
+
+            if not self._hasTyper(kwargs0):
+                raise NameError(f"Not a netrc file env0: {kwargs["env0"]} {f0}")
+            
             self.netrc0 = netrc.netrc(f0)
             return self.netrc0
 
+        f0 = self.defaults().get("config_file")
+        kwargs0 = kwargs | self.tag0(f0, "netrc")
+        if not self._hasTyper(kwargs0):
+            raise NameError(f"Not a netrc file: {kwargs0["config_file"]}")
+            return None
         self.netrc0 = netrc.netrc()
         return self.netrc0
+
 
     def _host0(self, **kwargs):
         """

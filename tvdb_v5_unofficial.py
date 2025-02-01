@@ -19,15 +19,16 @@ class Url(Url0):
   base_url = ""
 
   def __init__(self):  # No config_file argument here
-    url = Config.instance().get("url")  # Get the singleton instance
+    url = Config.handler0.get("url")  # Get the singleton instance
     super().__init__()
     self.base_url = url
 
 
 class TVDB(TVDB0):
   def __init__(self, config_file=None):
-    apikey = Config.instance(config_file).get("apikey")
-    pin = Config.instance(config_file).get("pin", "")
+    config0 = Config.handler0.get("apikey")
+    apikey = Config.handler0.get("apikey")
+    pin = Config.handler0.get("pin", "")
     url = Url()
 
     if not apikey or not url:
@@ -53,7 +54,8 @@ class Config:
 
   config={}
   factory=None
-  handler=None
+
+  _handler0 = None
   kwargs={}
   _instance=None
 
@@ -79,13 +81,20 @@ class Config:
     The handler is created everytime given the kwargs passed to it.
 
     """
-    return cls.instance()._load_config(**kwargs)
+    h0 = cls.instance()._load_config(**kwargs)
+    cls._instance._handler0 = h0
+    return h0
+
+  def handler0(self):
+    """Retrieve the last handler built."""
+    return self._handler0
 
   @classmethod
   def instance(cls, **kwargs):
     if cls._instance is None:
       cls._instance = Config(**kwargs)
-    return cls._instance
+
+    return cls._instance 
 
   @classmethod
   def _load_config(cls, **kwargs):

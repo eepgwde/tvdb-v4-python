@@ -1,4 +1,4 @@
-.PHONY: all all-local check check-local view-local
+.PHONY: all all-local check check-local view-local clean-local clean
 
 RLWRAP ?= 
 # RLWRAP ?= rlwrap
@@ -13,10 +13,12 @@ TESTS0 := $(wildcard tests/test_*.py)
 TESTS00 := $(basename $(notdir $(TESTS0)))
 TESTS1 ?= $(addsuffix .log,$(TESTS00))
 TESTS2 ?= $(addprefix m-,$(TESTS1))
+TESTS2 ?= $(addprefix m-,$(TESTS1))
 
 RUNS0 := $(wildcard tests/run_*.py)
 RUNS00 := $(basename $(notdir $(RUNS0)))
 RUNS1 ?= $(addsuffix .log,$(RUNS00))
+RUNS2 ?= $(addprefix m-,$(RUNS1))
 
 check:
 	$(REMAKE) check-local
@@ -27,7 +29,9 @@ tests.log: $(TESTS1)
 m-tests.log: $(TESTS1)
 	cat $(TESTS2) > $@
 
-check-local: $(TESTS1) tests.log m-tests.log
+X_TARGETS ?= tests.log m-tests.log
+
+check-local: $(TESTS1) $(X_TARGETS)
 
 all-local: $(RUNS1)
 
@@ -46,3 +50,6 @@ view-local:
 	@echo RUNS00 $(RUNS00)
 	@echo RUNS1 $(RUNS1)
 
+clean-local:
+	-$(RM) $(TESTS1) $(TESTS2) $(RUNS1) $(RUNS2)
+	-$(RM) $(X_TARGETS)
