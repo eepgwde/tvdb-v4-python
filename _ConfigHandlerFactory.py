@@ -33,7 +33,8 @@ class ConfigHandlerFactory:
     def try0(self, **kwargs):
         for cls in self.clss:
             try:
-                kwargs0 = kwargs.copy()
+                # pass a copy just in case they update it
+                kwargs0 = kwargs.copy() 
                 instance = cls(**kwargs0) 
                 return instance
             except Exception as e:
@@ -53,13 +54,11 @@ class ConfigHandlerFactory:
 
         These can be found from the defaults() method for the Config class.
 
-        If env0 is set, try and load using that, and return None if
-        it fails.
+        If env0 is set, it should try and load using that
         
-        If config_file is set, try and load using that and return None
-        if it fails.
+        If config_file is set, the same.
 
-        If neither env0 nor config_file was set, it tries to load using
+        If neither env0 nor config_file was set, it should try to load using
         the defaults and returns the first one that succeeds.
 
         The order of the handlers is tried is given by the Config::defaults() 
