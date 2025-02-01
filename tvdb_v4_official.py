@@ -5,6 +5,7 @@ import urllib.request
 from http import HTTPStatus
 from urllib.error import HTTPError
 
+from _Pdb0 import Pdb0
 
 class Auth:
     def __init__(self, url, apikey, pin=""):
@@ -86,11 +87,13 @@ class TVDB:
         """
         Pass a derived class.
         """
+
         if url0 is None:
             self.url = Url(url0)
         else:
             self.url = url0
 
+        Pdb0().trap1 = 7
         login_url = self.url.construct("login")
         self.auth = Auth(login_url, apikey, pin)
         auth_token = self.auth.get_token()

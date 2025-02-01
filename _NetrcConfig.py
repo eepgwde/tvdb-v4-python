@@ -15,7 +15,8 @@ class NetrcConfigHandler(ConfigHandler):
         "env0": "NETRC",
         "env1": "NETRC_MACHINE",
         "config_dir": os.path.expanduser("~"),
-        "machine": Defaults0().host0
+        "machine": Defaults0().host0,
+        "url_path": "/v4/"
     }
 
     kwargs = {}
@@ -123,7 +124,7 @@ class NetrcConfigHandler(ConfigHandler):
             h0 = self._host1(**kwargs)
             if h0 is None:
                 return default0
-            return f"http://{h0}/"
+            return f"http://{h0}{self.defaults0["url_path"]}"
 
         # login, account, password
 

@@ -22,11 +22,9 @@ class Url(Url0):
 
   def __init__(self, config_file=None):
     configuror = Config.instance().get_configuror(config_file=config_file)
-    configuror.get("url")
 
     super().__init__()
-    self.base_url = url
-
+    self.base_url = configuror.get("url")
 
 class TVDB(TVDB0):
 

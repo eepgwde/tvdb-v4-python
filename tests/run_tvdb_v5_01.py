@@ -6,8 +6,12 @@ import pickle
 from tvdb_v5_unofficial import __Id__ as weavesId
 from tvdb_v5_unofficial import TVDB, Config
 
+from _NetrcConfig import NetrcConfigHandler
+
 import json
 import os
+
+from _Pdb0 import Pdb0
 
 import pdb
 
@@ -72,31 +76,23 @@ class Test3(unittest.TestCase):
   def test_009(self):
     self.assertIsNotNone(weavesId)
 
-    # force netrc
-    h0 = Config.defaults()
-    logger.info(f"h0: keys: {h0.keys()}")
+    defaults_run = Config.instance().factory.get_defaults_run(key0="netrc")
+    self.assertIsNotNone(defaults_run)
 
-    f0 = lambda x: "netrc" in x.lower()
-    v1 = next(filter(f0, h0.keys()))
+    # Pdb0().trap0 = 5
+    v0 = Config.handler(**defaults_run)
+    self.assertIsNotNone(v0)
+    logger.info(f"handler: netrc: {v0.__class__.__name__}")
 
-    logger.info(f"v1: Netrc handler: {v1}")
+    self.assertTrue(isinstance(v0, NetrcConfigHandler))
 
-    v2 = h0[v1]
-    logger.info(f"v2: Netrc handler: defaults: {v2}")
+    Pdb0().trap0 = 7
+    tvdb = TVDB(config_file=v0)
+    v0 = tvdb.search("Paradise", language="eng", limit=5, type="series")
+    fpickle1(v0)
 
-    v2 = h0[v1]["config_file"]
-    logger.info(f"v2: Netrc handler: config_file: {v2}")
-    r0 = Config.instance().get_config_file(key0="netrc", defaults0=h0)
-
-    logger.info(f"get_config_file: r0[0]: {r0[0]}")
-    logger.info(f"get_config_file: r0[1]: {r0[1]}")
-
-    machine0 = r0[1].get("machine", None)
-
-    # tvdb = TVDB(config_file="./config.json")
-
-  @unittest.skip("Not used")
-  def test_011(self):
+  @unittest.skip("The Lost example")
+  def test_021(self):
     self.assertIsNotNone(tvdb)
     logger.info(f"tvdb: TVDB: {tvdb}")
 
