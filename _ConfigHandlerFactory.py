@@ -1,12 +1,20 @@
 from _Defaults1 import Defaults1
 
+from _Pdb0 import Pdb0
+
 class ConfigHandlerFactory:
     clss = Defaults1().clss
+
+    def _classes0(self, **kwargs):
+        clss = self.clss
+        if "classes" in kwargs:
+            clss = set(kwargs["classes"])
+        return clss
 
     def get_defaults(self, **kwargs):
         """Returns the defaults for each class."""
         r0 = {}
-        for cls in self.clss:
+        for cls in self._classes0(**kwargs):
             r0[cls.__name__] = cls.defaults()
 
         return r0
@@ -14,7 +22,7 @@ class ConfigHandlerFactory:
     def get_defaults_run(self, **kwargs):
         """Returns the runtime defaults that can be used to instantiate."""
         r0 = {}
-        for cls in self.clss:
+        for cls in self._classes0(**kwargs):
             r0[cls.__name__] = cls.get_default()
 
         if "key0" in kwargs:
@@ -28,7 +36,8 @@ class ConfigHandlerFactory:
         return r0
 
     def try0(self, **kwargs):
-        for cls in self.clss:
+        Pdb0().trap1 = 5
+        for cls in self._classes0(**kwargs):
             try:
                 # pass a copy just in case they update it
                 kwargs0 = kwargs.copy() 
@@ -43,6 +52,11 @@ class ConfigHandlerFactory:
 
     def get_handler(self, **kwargs):
         """Returns the appropriate config handler based on keywords
+
+        One can restrict the classes to try as handlers, by passing a
+        "classes" keyword set to a list of classes to try.
+
+        After that, the initialization process for each class is this:
 
         It first tries two overrides passed in the keywords.
         
@@ -60,5 +74,4 @@ class ConfigHandlerFactory:
 
         The order of the handlers is tried is given by the Config::defaults() 
         """
-        v0 = self.try0(**kwargs)
-        return v0
+        return self.try0(**kwargs)

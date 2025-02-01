@@ -76,11 +76,12 @@ class Test3(unittest.TestCase):
   def test_009(self):
     self.assertIsNotNone(weavesId)
 
-    defaults_run = Config.instance().factory.get_defaults_run(key0="netrc")
-    self.assertIsNotNone(defaults_run)
+    classes0 = set([NetrcConfigHandler])
+    r0 = Config.instance().factory.get_defaults_run(classes=classes0, key0="netrc")
+    kwargs0 = { "classes" : classes0 } | r0
 
     # Pdb0().trap0 = 5
-    v0 = Config.handler(**defaults_run)
+    v0 = Config.handler(**kwargs0)
     self.assertIsNotNone(v0)
     logger.info(f"handler: netrc: {v0.__class__.__name__}")
 
@@ -88,7 +89,7 @@ class Test3(unittest.TestCase):
 
     Pdb0().trap0 = 7
     tvdb = TVDB(config_file=v0)
-    v0 = tvdb.search("Paradise", language="eng", limit=5, type="series")
+    v0 = tvdb.search("The Agency", language="eng", limit=5, type="series")
     fpickle1(v0)
 
   @unittest.skip("The Lost example")

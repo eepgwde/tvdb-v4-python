@@ -1,30 +1,21 @@
+import json
+import os
 import unittest
 import logging
 
-from tvdb_v5_unofficial import __Id__ as weavesId
-from tvdb_v5_unofficial import TVDB
-from tvdb_v5_unofficial import Config
+from _Pdb0 import Pdb0
 
 from _ConfigHandler import ConfigHandler
 from _JsonConfig import JsonConfigHandler
 from _NetrcConfig import NetrcConfigHandler
 
-import json
-import os
-
-from _Pdb0 import Pdb0
-
-VALID_API_KEY = "valid_api_key"
-VALID_PIN = "valid_pin"
+from tvdb_v5_unofficial import __Id__ as weavesId, TVDB, Config
 
 logging.basicConfig(filename='test.log', level=logging.DEBUG)
 logger = logging.getLogger('Test')
 sh = logging.StreamHandler()
 logger.addHandler(sh)
 
-## A test driver for GMus0
-#
-# @see GMus0
 class Test8(unittest.TestCase):
   """
   Test the Config object for handler0 
@@ -208,8 +199,31 @@ class Test8(unittest.TestCase):
     self.assertIsNotNone(v1)
     logger.info(f"url: string: {v1}")
 
-  @unittest.skip
   def test_021(self):
+    """
+    Force netrc using a classes keyword
+    """
+    # force netrc, use a singleton list
+    classes0 = set([NetrcConfigHandler])
+    r0 = Config.instance().factory.get_defaults_run(classes=classes0, key0="netrc")
+    kwargs0 = { "classes" : classes0 } | r0
+
+    Pdb0().trap0 = 5
+    v0 = Config.handler(**kwargs0)
+    self.assertIsNotNone(v0)
+    logger.info(f"handler: netrc: {v0.__class__.__name__}")
+
+    self.assertTrue(isinstance(v0, NetrcConfigHandler))
+
+    v1 = v0.get("apikey")
+    self.assertIsNotNone(v1)
+    logger.info(f"apikey: string: {v1}")
+    v1 = v0.get("url")
+    self.assertIsNotNone(v1)
+    logger.info(f"url: string: {v1}")
+
+  @unittest.skip
+  def test_031(self):
     """
     Load the last handler from the instance
     """
