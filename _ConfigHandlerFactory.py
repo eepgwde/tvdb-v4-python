@@ -33,7 +33,8 @@ class ConfigHandlerFactory:
     def try0(self, **kwargs):
         for cls in self.clss:
             try:
-                instance = cls(**kwargs) 
+                kwargs0 = kwargs.copy()
+                instance = cls(**kwargs0) 
                 return instance
             except Exception as e:
                 # print(f"no configuration: failed to create instance of {cls.__name__}: {e}", file=sys.stderr)
@@ -63,10 +64,5 @@ class ConfigHandlerFactory:
 
         The order of the handlers is tried is given by the Config::defaults() 
         """
-        v0 = None
-        if "env0" in kwargs:
-            return self.try0(env0=kwargs["env0"])
-        if "config_file" in kwargs:
-            return self.try0(config_file=kwargs["config_file"])
         v0 = self.try0(**kwargs)
         return v0
