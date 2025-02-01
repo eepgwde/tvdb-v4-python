@@ -1,10 +1,7 @@
-from _JsonConfig import JsonConfigHandler
-from _NetrcConfig import NetrcConfigHandler
-
-import pdb
+from _Defaults1 import Defaults1
 
 class ConfigHandlerFactory:
-    clss = (JsonConfigHandler, NetrcConfigHandler)
+    clss = Defaults1().clss
 
     def get_defaults(self, **kwargs):
         """Returns the defaults for each class."""

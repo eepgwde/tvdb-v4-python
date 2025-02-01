@@ -1,8 +1,6 @@
-from _Defaults import Defaults0
+from _Defaults0 import Defaults0
 
 import pdb
-
-import threading
 
 class Pdb0():
   """
@@ -13,9 +11,6 @@ class Pdb0():
   """
   # invisible attribute,  set by __new__
   # _instance = None
-
-  # this isn't used, but may need to be invisible.
-  _lock = threading.Lock()
 
   _trap0s = Defaults0().trap0s
 
