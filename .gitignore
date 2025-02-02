@@ -13,3 +13,4 @@ venv/
 .nox
 .cache
 pickle_*.pkl
+.\#*
