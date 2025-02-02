@@ -2,6 +2,9 @@ import json
 import os
 import sys
 
+import tempfile
+import pickle
+
 from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 from _ConfigHandlerFactory import ConfigHandlerFactory
@@ -138,6 +141,46 @@ class Config:
       raise ValueError(f"no configuration: unexpected {e}")
 
     return handler
+
+  ## Following are utility methods
+
+  def pickle1(self, v0, **kwargs):
+    """
+    Pickles a Python object to a temporary file in the current directory.
+
+    Args:
+        obj: The Python object to pickle.
+
+    Returns:
+        The absolute path to the temporary file, or None if an error occurs.
+    """
+    try:
+        with tempfile.NamedTemporaryFile(
+                mode='wb',
+                delete=False, dir=".", prefix="pickle_",
+                suffix=".pkl") as temp_file:
+            pickle.dump(v0, temp_file)
+            temp_file_path = temp_file.name
+        return temp_file_path
+    except Exception as e:
+        print(f"Error pickling object: {e}")
+        return None
+
+  def line_reader(self, filename):
+    """
+    Reads a file line by line and yields each line.
+
+    Args:
+      filename: The path to the file to read.
+
+    Yields:
+      The next line in the file.
+    """
+    with open(filename, 'r') as f:
+      for line in f:
+        yield line.strip()
+      
+
 
 # -*- coding: utf-8 -*-
 # Local Variables:

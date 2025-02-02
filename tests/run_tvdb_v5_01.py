@@ -21,29 +21,6 @@ sh = logging.StreamHandler()
 logger.addHandler(sh)
 
 
-def fpickle1(obj):
-    """
-    Pickles a Python object to a temporary file in the current directory.
-
-    Args:
-        obj: The Python object to pickle.
-
-    Returns:
-        The absolute path to the temporary file, or None if an error occurs.
-    """
-    try:
-        with tempfile.NamedTemporaryFile(
-                mode='wb',
-                delete=False, dir=".", prefix="pickle_",
-                suffix=".pkl") as temp_file:
-            pickle.dump(obj, temp_file)
-            temp_file_path = temp_file.name
-        return temp_file_path
-    except Exception as e:
-        print(f"Error pickling object: {e}")
-        return None
-
-
 class Test3(unittest.TestCase):
   """
   Test
@@ -87,10 +64,10 @@ class Test3(unittest.TestCase):
 
     self.assertTrue(isinstance(v0, NetrcConfigHandler))
 
-    Pdb0().trap0 = 7
+    # Pdb0().trap0 = 7
     tvdb = TVDB(config_file=v0)
-    v0 = tvdb.search("The Agency", language="eng", limit=5, type="series")
-    fpickle1(v0)
+    v0 = tvdb.search("Upstairs downstairs", language="eng", limit=5, type="series")
+    Config.instance().pickle1(v0)
 
   @unittest.skip("The Lost example")
   def test_021(self):
