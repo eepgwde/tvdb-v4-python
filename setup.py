@@ -1,21 +1,21 @@
 from setuptools import find_packages, setup
 
-VERSION = "1.0.12"
-DESCRIPTION = "Official tvdb api v4 package"
-LONG_DESCRIPTION = "Official python package for using the tvdb v4 api"
+VERSION = "0.9.0"
+DESCRIPTION = "Unofficial tvdb api v5 package"
+LONG_DESCRIPTION = "Unofficial python package for using the tvdb v4 api"
 
 # Setting up
 setup(
-    name="tvdb_v4_official",
+    name="tvdb_v5_unofficial",
     version=VERSION,
-    author="Weylin Wagnon",
-    author_email="<support@thetvdb.com>",
-    url="https://github.com/thetvdb/tvdb-v4-python",
+    author="Walter Eaves",
+    author_email="<walter.eaves@gmx.de",
+    url="https://github.com/eepgwde/tvdb-v4-python",
     description="tvdb-api-v4 utility package",
-    long_description="official python client for the tvdb api v4",
+    long_description="Unofficial python client for the tvdb api v4",
     packages=find_packages(),
     install_requires=[],
-    py_modules=["tvdb_v4_official"],
+    py_modules=["tvdb_v5_unofficial"],
     keywords=["python", "tvdb"],
     classifiers=[
         "Development Status :: 3 - Alpha",
