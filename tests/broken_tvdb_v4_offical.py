@@ -7,9 +7,8 @@ import pytest
 
 from unittest.mock import patch, MagicMock
 
-
-import tvdb_v4_unofficial
-from tvdb_v4_unofficial import TVDB
+import tvdb_v4_unofficial 
+from tvdb_v5_unofficial import TVDB0
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
@@ -18,12 +17,15 @@ VALID_PIN = "valid_pin"
 
 # Refuses to work here.
 
+"""
 
 @pytest.fixture
 def tvdb_instance():
     with patch("tvdb_v4_unofficial.Auth") as MockAuth:
         MockAuth.return_value.get_token.return_value = "test_token"
-        instance = TVDB(VALID_API_KEY, VALID_PIN)
+        instance = TVDB0(
+            VALID_API_KEY, VALID_PIN
+        )
         return instance
 
 @patch("urllib.request.urlopen")
@@ -40,4 +42,3 @@ def test_get_artwork(mocked_urlopen, tvdb_instance):
     artwork = tvdb_instance.get_artwork(123)
     assert artwork["id"] == 123
     assert artwork["type"] == "Poster"
-"""
