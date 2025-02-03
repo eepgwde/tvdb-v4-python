@@ -12,6 +12,8 @@ import pytest
 
 from unittest.mock import patch, MagicMock
 
+import _tvdb_v4_official as tvdb_v4_official
+
 import pdb
 
 from tvdb_v5_unofficial import TVDB, Config
@@ -22,7 +24,7 @@ VALID_PIN = "valid_pin"
 
 @pytest.fixture
 def tvdb_instance():
-    with patch("tvdb_v4_official.Auth") as MockAuth:
+    with patch("_tvdb_v4_official.Auth") as MockAuth:
         MockAuth.return_value.get_token.return_value = "test_token"
 
         # How to initialize for netrc

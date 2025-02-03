@@ -5,7 +5,8 @@
 from unittest.mock import patch, MagicMock
 import pytest
 import json
-from tvdb_v4_official import TVDB
+
+from _tvdb_v4_official import TVDB
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
@@ -13,7 +14,7 @@ VALID_PIN = "valid_pin"
 
 @pytest.fixture
 def tvdb_instance():
-    with patch("tvdb_v4_official.Auth") as MockAuth:
+    with patch("_tvdb_v4_official.Auth") as MockAuth:
         MockAuth.return_value.get_token.return_value = "test_token"
         instance = TVDB(VALID_API_KEY, VALID_PIN)
         return instance

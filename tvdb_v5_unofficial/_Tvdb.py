@@ -5,7 +5,7 @@ import sys
 import tempfile
 import pickle
 
-from tvdb_v4_official import Url as Url0, TVDB as TVDB0
+from _tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 from _Config import Config
 
