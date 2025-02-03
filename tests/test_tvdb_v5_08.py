@@ -9,6 +9,8 @@ from _ConfigHandler import ConfigHandler
 from _JsonConfig import JsonConfigHandler
 from _NetrcConfig import NetrcConfigHandler
 
+from _Envs0 import Envs0
+
 from tvdb_v5_unofficial import __Id__ as weavesId, TVDB, Config
 
 logging.basicConfig(filename='test.log', level=logging.DEBUG)
@@ -16,7 +18,7 @@ logger = logging.getLogger('Test')
 sh = logging.StreamHandler()
 logger.addHandler(sh)
 
-class Test8(unittest.TestCase):
+class Test8(unittest.TestCase, Envs0):
   """
   Test the Config object for handler0 
 
@@ -36,6 +38,7 @@ class Test8(unittest.TestCase):
   ## Null setup.
   def tearDown(self):
     logger.info('tearDown')
+    super().tearDown()
 
   ## Loaded?
   ## Is utf-8 available as a filesystemencoding()
@@ -112,7 +115,9 @@ class Test8(unittest.TestCase):
 
   # @unittest.skip("Not yet")
   def test_011(self):
-     # force netrc
+    """
+    force netrc
+    """
     h0 = Config.defaults()
     logger.info(f"h0: keys: {h0.keys()}")
 
@@ -135,9 +140,9 @@ class Test8(unittest.TestCase):
 
   def test_013(self):
     """
-    How to force a handler: netrc
+    How to force a handler: netrc by location
     """
-    # force netrc
+    # force netrc - just use my HOME
     r0 = Config.instance().factory.get_defaults_run(key0="netrc")
     self.assertIsNotNone(r0)
     logger.info(f"get_defaults_run: {r0}")
@@ -145,12 +150,16 @@ class Test8(unittest.TestCase):
     h0 = Config.handler(**r0)
     self.assertIsNotNone(h0)
     logger.info(f"handler: netrc: {h0.__class__.__name__}")
-    self.assertTrue(isinstance(h0, NetrcConfigHandler))
+
+    self.assertTrue(h0.__class__.__name__ == 'NetrcConfigHandler')
 
   def test_015(self):
     """
-    How to force a handler: json
+    How to force a handler: json by location
     """
+    pwd0 = os.environ["PWD"]
+    os.chdir("tests/home0")
+
     # force netrc
     r0 = Config.instance().factory.get_defaults_run(key0="json")
     self.assertIsNotNone(r0)
@@ -164,14 +173,21 @@ class Test8(unittest.TestCase):
     h0 = Config.handler(**r0)
     self.assertIsNotNone(h0)
     logger.info(f"handler: json: {h0.__class__.__name__}")
-    self.assertTrue(isinstance(h0, JsonConfigHandler))
+    self.assertTrue(h0.__class__.__name__ == 'JsonConfigHandler')
+
+    os.chdir(pwd0)
 
     
   def test_017(self):
+    """
+    Use the last handler
+    """
     v0 = Config.instance().handler0()
     self.assertIsNotNone(v0)
     logger.info(f"handler: json: {v0.__class__.__name__}")
-    self.assertTrue(isinstance(v0, JsonConfigHandler))
+
+    # self.assertTrue(isinstance(v0, JsonConfigHandler))
+    self.assertTrue(v0.__class__.__name__ == 'JsonConfigHandler')
 
     v1 = v0.get("apikey")
     self.assertIsNotNone(v1)
@@ -181,7 +197,7 @@ class Test8(unittest.TestCase):
     logger.info(f"url: string: {v1}")
 
   def test_019(self):
-    # force netrc
+    """force netrc using location and machine default"""
     r0 = Config.instance().factory.get_defaults_run(key0="netrc")
     self.assertIsNotNone(r0)
 
@@ -208,7 +224,7 @@ class Test8(unittest.TestCase):
     r0 = Config.instance().factory.get_defaults_run(classes=classes0, key0="netrc")
     kwargs0 = { "classes" : classes0 } | r0
 
-    Pdb0().trap0 = 5
+    # Pdb0().trap0 = 5
     v0 = Config.handler(**kwargs0)
     self.assertIsNotNone(v0)
     logger.info(f"handler: netrc: {v0.__class__.__name__}")

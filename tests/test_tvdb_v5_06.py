@@ -8,6 +8,8 @@ from tvdb_v5_unofficial import Config
 import json
 import os
 
+from _Envs0 import Envs0
+
 from _Pdb0 import Pdb0
 
 VALID_API_KEY = "valid_api_key"
@@ -21,7 +23,7 @@ logger.addHandler(sh)
 ## A test driver for GMus0
 #
 # @see GMus0
-class Test1(unittest.TestCase):
+class Test1(unittest.TestCase, Envs0):
   """
   Test the Config object for JSON files
 
@@ -41,7 +43,9 @@ class Test1(unittest.TestCase):
   ## Null setup.
   def tearDown(self):
     logger.info('tearDown')
-
+    t0 = self.home0
+    os.chdir(t0)
+    os.environ["HOME"] = t0
   ## Loaded?
   ## Is utf-8 available as a filesystemencoding()
   def test_001(self):
@@ -70,8 +74,7 @@ class Test1(unittest.TestCase):
     If it is too difficult, you can disable the test altogeter expected failure - called config a in the source code comments."""
     self.assertIsNotNone(weavesId)
 
-    home0 = os.environ["HOME"]
-    os.environ["HOME"] = os.environ["TMPDIR"]
+    self.envsTMP()
 
     # Pdb0().trap0 = 6
     ## not a - comment this if you use config a
@@ -80,9 +83,7 @@ class Test1(unittest.TestCase):
       ):
       v0 = Config.handler()
 
-    Pdb0().reset0()
-    os.environ["HOME"] = home0
-
+    # Pdb0().reset0()
     ## a
     # v0 = Config.handler()
 
@@ -91,20 +92,17 @@ class Test1(unittest.TestCase):
     and cache the handler in the instance.
 
     The keyword arguments will be cached in the handler
-    Avoid Netrc configuration by changing HOME
+    Avoid by using a JSON file
     """
     self.assertIsNotNone(weavesId)
 
-    f0 = os.path.abspath("./config.json")
+    f0 = os.path.join(self.pwd1, "config.json")
 
-    home0 = os.environ["HOME"]
-    os.environ["HOME"] = os.environ["TMPDIR"]
+    self.envsTMP()
 
-    # Pdb0().trap0 = 6
+    # Pdb0().trap0 = 5
     v0 = Config.handler(config_file=f0)
     self.assertIsNotNone(v0)
-
-    os.environ["HOME"] = home0
 
     v1 = v0.get("url")
     self.assertIsNotNone(v0)
@@ -141,7 +139,8 @@ class Test1(unittest.TestCase):
     self.assertIsNotNone(defaults0)
     logger.info(f"defaults0: {defaults0}")
 
-    os.environ["TVDB_CONFIG"]="./config2.json"
+    f0 = os.path.join(self.pwd1, "config2.json")
+    os.environ["TVDB_CONFIG"] = f0
 
     v0 = Config.handler(env0="TVDB_CONFIG")
 
@@ -170,10 +169,10 @@ class Test1(unittest.TestCase):
 
     self.assertIsNone(os.environ.get(v0))
 
-    os.environ[v0] = os.path.abspath("./config2.json")
+    f0 = os.path.join(self.pwd1, "config2.json")
+    os.environ[v0] = f0
 
-    home0 = os.environ["HOME"]
-    os.environ["HOME"] = os.environ["TMPDIR"]
+    self.envsTMP()
 
     # Pdb0().trap0 = 6
     v0 = Config.handler(env0=v0)
@@ -204,7 +203,11 @@ class Test1(unittest.TestCase):
     """
     self.assertIsNotNone(weavesId)
 
-    os.environ["HOME"] = os.environ["PWD"]
+    self.envsALT()
+
+    os.environ["TVDB_CONFIG"] = "./config.json"
+
+    # Pdb0().trap0 = 5
     v0 = Config.handler()
     self.assertIsNotNone(v0)
     v1 = v0.get("url")
@@ -233,7 +236,8 @@ class Test1(unittest.TestCase):
     self.assertIsNotNone(weavesId)
 
     # Pdb0().trap0 = 6
-    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    self.envsALT2()
+
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 
@@ -256,13 +260,18 @@ class Test1(unittest.TestCase):
   def test_021(self):
     """Test the default NETRC location.
 
-    This test changes HOME to a test directory PWD, which is this file's source directory.
+    This test changes HOME to a test directory.
 
     It manages to get a handler, then interrogates for the defaults and uses the one it finds.
     """
     self.assertIsNotNone(weavesId)
 
-    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    # Pdb0().trap0 = 5
+
+    # import pdb; pdb.set_trace()
+
+    self.envsALT2()
+
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 
@@ -298,7 +307,7 @@ class Test1(unittest.TestCase):
     """
     self.assertIsNotNone(weavesId)
 
-    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    self.envsALT2()
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 
@@ -339,7 +348,8 @@ class Test1(unittest.TestCase):
     """
     self.assertIsNotNone(weavesId)
 
-    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
+    self.envsALT2()
+
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 

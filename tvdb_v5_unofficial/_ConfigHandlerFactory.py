@@ -36,7 +36,6 @@ class ConfigHandlerFactory:
         return r0
 
     def try0(self, **kwargs):
-        Pdb0().trap1 = 5
         for cls in self._classes0(**kwargs):
             try:
                 # pass a copy just in case they update it
