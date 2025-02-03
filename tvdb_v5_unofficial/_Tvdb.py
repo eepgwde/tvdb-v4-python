@@ -5,13 +5,13 @@ import sys
 import tempfile
 import pickle
 
-from _tvdb_v4_official import Url as Url0, TVDB as TVDB0
-
 from _Config import Config
 
-class Url(Url0):
+import tvdb_v4_unofficial
+
+class Url(tvdb_v4_unofficial.Url):
   """
-  An override of the tvdb_v4_official:Url class.
+  An override of the tvdb_v4_unofficial:Url class.
 
   It gets the base_url attribute from the Config.instance().
   """
@@ -23,11 +23,11 @@ class Url(Url0):
     super().__init__()
     self.base_url = configuror.get("url")
 
-class TVDB(TVDB0):
+class TVDB(tvdb_v4_unofficial.TVDB):
   """
-  An override of the tvdb_v4_official:TVDB class.
+  An override of the tvdb_v4_unofficial:TVDB class.
 
-  It uses the Config.instance() to get a configuror and gets the items needed to create a tvdb_v4_official instance.
+  It uses the Config.instance() to get a configuror and gets the items needed to create a tvdb_v4_unofficial instance.
   """
 
   def __init__(self, config_file=None):

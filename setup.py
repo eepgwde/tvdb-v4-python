@@ -15,7 +15,7 @@ setup(
     long_description="Unofficial python client for the tvdb api v4",
     packages=find_packages(),
     install_requires=[],
-    py_modules=["tvdb_v5_unofficial"],
+    py_modules=["tvdb_v5_unofficial", "tvdb_v4_unofficial"],
     keywords=["python", "tvdb"],
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -24,7 +24,7 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ],
-    package_dir={"tvdb_v5_unofficial": "tvdb_v5_unofficial"},
+    package_dir={"tvdb_v5_unofficial": "tvdb_v5_unofficial", "tvdb_v4_unofficial" : "tvdb_v4_unofficial" },
     # tests_require=["pytest"],
     test_suite="tests",
     scripts=["tvdb_v5_unofficial/fetch0.py"],

@@ -7,6 +7,8 @@
 
 from ._version import __version__, __Id__
 
+from tvdb_v4_unofficial import TVDB as TVDB0, Url as Url0
+
 # For running the system, you need these and hope
 # all the defaults work.
 from ._Tvdb import TVDB, Url
