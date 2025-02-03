@@ -40,6 +40,7 @@ all-local: $(RUNS1)
 # and command history in the pdb debugger.
 m-%.log %.log: tests/%.py
 	:> $*.log
+	:> test.log
 	( $(RLWRAP) python -m $(PYTEST) -v $< ) 2>&1 | tee m-$*.log
 	cat test.log > $*.log
 
