@@ -1,11 +1,9 @@
-import json
-import os
 import sys
+import os
+import json
 
 import tempfile
 import pickle
-
-from tvdb_v4_official import Url as Url0, TVDB as TVDB0
 
 from _ConfigHandlerFactory import ConfigHandlerFactory
 
@@ -15,48 +13,14 @@ from _Pdb0 import Pdb0
 
 import pdb
 
-# Import only Url and TVDB
-
-__Id__ = "$Id: 3ea81035d76c968d73b5840b3d0f845d47e216c5 $"
-
-
-class Url(Url0):
-  base_url = ""
-
-  def __init__(self, config_file=None):
-    configuror = Config.instance().get_configuror(config_file=config_file)
-
-    super().__init__()
-    self.base_url = configuror.get("url")
-
-class TVDB(TVDB0):
-
-  def __init__(self, config_file=None):
-    """Polymorphic parameter in config_file"""
-    configuror = Config.instance().get_configuror(config_file=config_file)
-
-    apikey = configuror.get("apikey")
-    pin = configuror.get("pin", "")
-    url = Url(config_file=configuror)
-
-    if not apikey or not url:
-      raise ValueError("Missing 'apikey' or 'url' in config.")
-
-    super().__init__(apikey, pin, url)
-
 class Config:
-  """This is a factory implemented as a Singleton.
+  """This is a Utility Singleton for accessing Configurations.
 
-  The instance() method returns a Handler for a type of configuration file. The
-  config handlers each take a turn to parse the keyword arguments and return a
-  handler.
+  The instance() method returns the Singleton and with it one can access utility methods.
 
-  Usually, you only need one configuration handler, but you can reset the
-  Singleton and load a second handler.
+  The handler() method is another class method like instance(). Pass it some keyword arguments and it will attempt to create a configuration that will allow you to initialize a TVDB instance.
 
-  The handlers will persist, so you can create a JSON one or a Netrc one
-  as needed.
-
+  Once you have a working handler you can store it where you like. This Singleton is a very good place to do that. 
   """
 
   config={}

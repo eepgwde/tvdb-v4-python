@@ -24,7 +24,7 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ],
-    package_dir={"tvdb_v4_official": "tvdb_v4_official"},
-    tests_require=["pytest"],
+    package_dir={"tvdb_v5_unofficial": "tvdb_v5_unofficial"},
+    # tests_require=["pytest"],
     test_suite="tests",
 )

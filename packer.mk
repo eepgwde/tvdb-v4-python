@@ -3,15 +3,7 @@
 
 # Now to be used with conda
 
-PYTHON ?= python3
-PIP ?= pip3
-UUT ?= 
-FILE ?= test.log
-PYTHONIOENCODING=utf-8
-DOCSDIR ?= docs/
-PKG := tvdb_v5
-
-export SDIR
+include defs.mk 
 
 all::
 	true
@@ -19,19 +11,19 @@ all::
 ifneq ($(UUT),)
 
 check::
-	:> $(FILE)
+	:> $(X_LOG)
 	$(PYTHON) -m unittest -v tests.$(UUT)
 
 else
 
 check::
-	:> $(FILE)
+	:> $(X_LOG)
 	$(PYTHON) -m unittest discover -v -s tests
 
 endif 
 
 install-local:
-	$(PIP) install --break-system-packages --user .
+	$(PIP) install --break-system-packages --user -e .
 
 clean::
 	$(RM) $(wildcard *.pyc *.log *~ nohup.out)
@@ -56,17 +48,19 @@ docs:
 					--css etc/epydoc.css -o ${DOCSDIR} weaves/*.py
 
 uninstall::
-	rm -f $(wildcard dist/*.tar.gz)
+	$(RM) -f $(wildcard dist/*.tar.gz)
 	-$(SHELL) -c "cd $(HOME)/.local; pip3 uninstall --yes $(PKG)"
 
+# A fast build
 dist-local: uninstall
-	$(PYTHON) setup.py sdist
+	$(PYTHON) -m build --sdist --no-isolation --skip-dependency-check
+
+# Not so fast
+dist: uninstall
+	$(PYTHON) -m build --sdist
 
 install: dist-local
 	$(PIP) install --user $(wildcard dist/*.tar.gz)
-
-dist:
-	scp $(wildcard dist/*.tar.gz) root@glenda:/var/www/html/weaves-dev.tar.gz
 
 clean::
 	-$(SHELL) -c "find . -type d -name __pycache__ -exec rm -rf {} \;"

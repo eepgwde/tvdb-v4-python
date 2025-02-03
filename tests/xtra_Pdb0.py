@@ -1,9 +1,12 @@
+## weaves
+# This tests the debugging module, which is interactive, you need
+# to continue the debugging twice
+
 import unittest
 import logging
 import tempfile
 
 from _Pdb0 import Pdb0
-import pdb
 
 import json
 import os
