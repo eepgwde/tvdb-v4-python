@@ -5,14 +5,16 @@
 # 
 # But it uses a mock and doesn't seem to run anything.
 
-from unittest.mock import patch, MagicMock
-import pytest
-import json
 import sys
+import os
+import json
+import pytest
+
+from unittest.mock import patch, MagicMock
 
 import pdb
 
-from tvdb_v5_unofficial import TVDB
+from tvdb_v5_unofficial import TVDB, Config
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
@@ -22,7 +24,12 @@ VALID_PIN = "valid_pin"
 def tvdb_instance():
     with patch("tvdb_v4_official.Auth") as MockAuth:
         MockAuth.return_value.get_token.return_value = "test_token"
-        instance = TVDB(config_file="./config.json")
+
+        # How to initialize for netrc
+        os.environ["TVDB_MACHINE"]="api4.thetvdb.com"
+        v0 = Config.handler(env1="TVDB_MACHINE")
+
+        instance = TVDB(config_file=v0)
         return instance
 
 @patch("urllib.request.urlopen")

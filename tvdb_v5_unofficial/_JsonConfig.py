@@ -46,13 +46,14 @@ class JsonConfigHandler(ConfigHandler):
     if not self._hasTyper({ "config_file" : f0, "config_type" : ".json" }):
       return None
 
+    Pdb0().trap1 = 5
     try:
       with open(f0, "r") as f:
         self._config = json.load(f)
         return self._config
     except (FileNotFoundError, json.JSONDecodeError) as e:
       # print(f"Error file: '{f0}': {e}", file=sys.stderr)
-      # pdb.set_trace()
+      pdb.set_trace()
       return None
     except Exception as e:
       print(f"An unexpected error occurred: {e}", file=sys.stderr)

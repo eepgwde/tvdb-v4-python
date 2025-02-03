@@ -17,6 +17,8 @@ import pickle
 from tvdb_v5_unofficial import __Id__ as weavesId
 from tvdb_v5_unofficial import Config, JsonConfigHandler, NetrcConfigHandler
 
+
+from _Pdb0 import Pdb0
 import pdb
 
 logging.basicConfig(filename='test.log', level=logging.DEBUG)
@@ -110,15 +112,22 @@ class Test4(unittest.TestCase):
     os.environ["HOME"] = home0
 
   def test_007(self):
-    """Only the JSON or Netrc can pass, but JSON is first
+    """Both the JSON or Netrc can pass, but JSON is first
     Use the instance itself as an unsafe hacker's cache."""
     self.assertIsNotNone(weavesId)
     home0=os.environ["HOME"]
     os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
-    os.environ["TVDB_CONFIG"]="./config.json"
+    os.environ["TVDB_CONFIG"] = os.path.join(os.environ["HOME"], "config.json")
+
+    # Pdb0().trap0 = 5
+    
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
-    self.assertTrue(isinstance(v0,JsonConfigHandler))
+
+    # Bizarrely, this doesn't work.
+    # self.assertTrue(isinstance(v0,JsonConfigHandler))
+    self.assertTrue(v0.__class__.__name__ == 'JsonConfigHandler')
+
     logger.info(f"configHandler: {v0}")
     Config.instance().kwargs["jsonHandler"]=v0
 
@@ -144,6 +153,8 @@ class Test4(unittest.TestCase):
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")
+    os.environ["HOME"] = home0
+
 
   ## Get the URL, needs an environment variable.
   # or a machine.
