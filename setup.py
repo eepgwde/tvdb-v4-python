@@ -27,4 +27,5 @@ setup(
     package_dir={"tvdb_v5_unofficial": "tvdb_v5_unofficial"},
     # tests_require=["pytest"],
     test_suite="tests",
+    scripts=["tvdb_v5_unofficial/fetch0.py"],
 )
