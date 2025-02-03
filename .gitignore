@@ -14,3 +14,4 @@ venv/
 .cache
 pickle_*.pkl
 .\#*
+*.log

@@ -32,6 +32,10 @@ from ._Defaults1 import Defaults1
 # And you may want to do some debugging
 from ._Pdb0 import Pdb0
 
+from tvdb_v5_unofficial import __Id__ as weavesId
+
+from ._version import __version__, __Id__
+
 __copyright__ = 'Copyright 2024 Walter Eaves'
 __license__ = 'GPLv3'
 __title__ = 'weaves'

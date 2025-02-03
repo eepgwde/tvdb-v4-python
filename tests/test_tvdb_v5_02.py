@@ -1,3 +1,10 @@
+## weaves
+# From TVDB, this is their original pytest.
+# I know it won't work unless there is a ./config.json.
+# There is a directory in tests/home0 that has a config.
+# 
+# But it uses a mock and doesn't seem to run anything.
+
 from unittest.mock import patch, MagicMock
 import pytest
 import json

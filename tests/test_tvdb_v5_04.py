@@ -1,13 +1,21 @@
-import unittest
-import logging
-import tempfile
-import pickle
-
-from tvdb_v5_unofficial import __Id__ as weavesId
-from tvdb_v5_unofficial import Config
+## weaves
+# 
+# These tests use a couple of sub-directories of tests/ as HOME. 
+# These sub-directories have all the configuration options available:
+#  .netrc netrc
+#  ./config.json ./config2.json and .config/televida-renomo/config.json
+# Also I set HOME to TMPDIR for no configurations
 
 import json
 import os
+import logging
+import tempfile
+
+import unittest
+import pickle
+
+from tvdb_v5_unofficial import __Id__ as weavesId
+from tvdb_v5_unofficial import Config, JsonConfigHandler, NetrcConfigHandler
 
 import pdb
 
@@ -39,8 +47,24 @@ class Test4(unittest.TestCase):
     self.assertIsNotNone(weavesId)
     logger.info("module: Id: " + weavesId)
 
-  ## Defaults
   def test_003(self):
+    """
+  Defaults
+  Config.defaults() builds the defaults for the ConfigHandler instances.
+  There are defaults needed for a handler to run
+    env0 env1 - are both environment variable names. These two provide for indirect lookups by the Config
+  instance. env0 is usually TVDB_CONFIG and would be an environment variable set to the location of a
+  config file. env1 is the name of an environment variable that holds the name of a machine to use for
+  the HTTP calls. This is only needed for the NetrcConfigHandler. The JsonConfigHandler has the host in
+  the URL attribute in its config file.
+    
+  And other default values. The URL path is needed by NetrcConfigHandler.
+  Config.defaults() is important it updates the defaults0() in the ConfigHandler instances.
+  The ConfigHandler instances are not singletons, so I try to update the class defaults0() which an instance
+  has access to.
+
+  No valid config file or configuration is needed for this test.
+    """
     self.assertIsNotNone(weavesId)
     v0 = Config.defaults()
     self.assertIsNotNone(v0)
@@ -85,14 +109,16 @@ class Test4(unittest.TestCase):
     logger.info(f"configHandler: should be None: {v0}")
     os.environ["HOME"] = home0
 
-  ## Only the JSON should pass
-  # Use the instance itself as an unsafe hacker's
-  # cache.
   def test_007(self):
+    """Only the JSON or Netrc can pass, but JSON is first
+    Use the instance itself as an unsafe hacker's cache."""
     self.assertIsNotNone(weavesId)
+    home0=os.environ["HOME"]
+    os.environ["HOME"] = os.path.join(os.environ["PWD"], "tests", "home0")
     os.environ["TVDB_CONFIG"]="./config.json"
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
+    self.assertTrue(isinstance(v0,JsonConfigHandler))
     logger.info(f"configHandler: {v0}")
     Config.instance().kwargs["jsonHandler"]=v0
 
@@ -104,10 +130,17 @@ class Test4(unittest.TestCase):
     logger.info(f"configHandler: {v0}")
 
 
-  ## Only the NETRC should pass
   def test_009(self):
+    """Only the NETRC should pass. Use tests/home1 for only NetrcConfigHandler """
     self.assertIsNotNone(weavesId)
-    os.environ["TVDB_CONFIG"]=self._netrc0
+
+    os.environ["NETRC"]=os.path.abspath(self._netrc0)
+
+    home0=os.environ["HOME"]
+    os.environ["HOME"] = os.environ["TMPDIR"]
+
+    # Json will win if this is set.
+    # os.environ["TVDB_CONFIG"]="./config.json"
     v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     logger.info(f"configHandler: {v0}")

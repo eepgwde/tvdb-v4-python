@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pkg_resources  # part of setuptools
 
-__version__ = pkg_resources.get_distribution("weaves").version
+__version__ = pkg_resources.get_distribution("tvdb_v5_unofficial").version
 
 # __version__ = '0.1.0'
 
