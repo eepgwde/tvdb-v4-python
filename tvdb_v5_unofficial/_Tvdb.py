@@ -5,7 +5,7 @@ import sys
 import tempfile
 import pickle
 
-from _Config import Config
+from ._Config import Config
 
 import tvdb_v4_unofficial
 
