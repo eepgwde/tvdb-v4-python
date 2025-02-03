@@ -5,16 +5,13 @@ import argparse
 import os
 
 from tvdb_v5_unofficial import __Id__ as weavesId
-from tvdb_v5_unofficial import TVDB, Config
-
-from _NetrcConfig import NetrcConfigHandler
+from tvdb_v5_unofficial import TVDB, Config, NetrcConfigHandler
 
 import json
 import os
 import sys
 
-from _Pdb0 import Pdb0
-
+from tvdb_v5_unofficial import Pdb0
 import pdb
 
 

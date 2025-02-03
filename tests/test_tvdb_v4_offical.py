@@ -14,6 +14,10 @@ from tvdb_v4_unofficial import TVDB
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
 
+"""
+
+# Refuses to work here.
+
 
 @pytest.fixture
 def tvdb_instance():
@@ -21,10 +25,6 @@ def tvdb_instance():
         MockAuth.return_value.get_token.return_value = "test_token"
         instance = TVDB(VALID_API_KEY, VALID_PIN)
         return instance
-
-"""
-
-# Refuses to work here.
 
 @patch("urllib.request.urlopen")
 def test_get_artwork(mocked_urlopen, tvdb_instance):

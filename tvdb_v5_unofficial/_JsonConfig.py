@@ -2,8 +2,8 @@ import os
 import sys
 import json
 
-from _ConfigHandler import ConfigHandler
-from _Pdb0 import Pdb0
+from ._ConfigHandler import ConfigHandler
+from ._Pdb0 import Pdb0
 
 class JsonConfigHandler(ConfigHandler):
   defaults0 = {

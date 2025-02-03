@@ -1,6 +1,6 @@
 from ._Defaults1 import Defaults1
 
-from _Pdb0 import Pdb0
+from ._Pdb0 import Pdb0
 
 class ConfigHandlerFactory:
     clss = Defaults1().clss

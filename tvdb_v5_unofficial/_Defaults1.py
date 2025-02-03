@@ -1,8 +1,8 @@
 ## weaves
 # Defaults file
 
-from _JsonConfig import JsonConfigHandler
-from _NetrcConfig import NetrcConfigHandler
+from ._JsonConfig import JsonConfigHandler
+from ._NetrcConfig import NetrcConfigHandler
 
 class Defaults1:
 

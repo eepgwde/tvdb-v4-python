@@ -17,8 +17,8 @@ import pickle
 from tvdb_v5_unofficial import __Id__ as weavesId
 from tvdb_v5_unofficial import Config, JsonConfigHandler, NetrcConfigHandler
 
+from tvdb_v5_unofficial import Pdb0
 
-from _Pdb0 import Pdb0
 import pdb
 
 logging.basicConfig(filename='test.log', level=logging.DEBUG)

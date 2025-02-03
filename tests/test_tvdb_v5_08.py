@@ -1,17 +1,15 @@
-import json
 import os
+import json
 import unittest
 import logging
 
-from _Pdb0 import Pdb0
+from tvdb_v5_unofficial import TVDB, Config
+from tvdb_v5_unofficial import __Id__ as weavesId
+from tvdb_v5_unofficial import ConfigHandler, JsonConfigHandler, NetrcConfigHandler
 
-from _ConfigHandler import ConfigHandler
-from _JsonConfig import JsonConfigHandler
-from _NetrcConfig import NetrcConfigHandler
+from tvdb_v5_unofficial import Pdb0
 
-from _Envs0 import Envs0
-
-from tvdb_v5_unofficial import __Id__ as weavesId, TVDB, Config
+from ._Envs0 import Envs0
 
 logging.basicConfig(filename='test.log', level=logging.DEBUG)
 logger = logging.getLogger('Test')

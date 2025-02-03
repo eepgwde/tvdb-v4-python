@@ -9,7 +9,7 @@ from ._ConfigHandlerFactory import ConfigHandlerFactory
 
 from ._ConfigHandler import ConfigHandler
 
-from _Pdb0 import Pdb0
+from ._Pdb0 import Pdb0
 
 import pdb
 
