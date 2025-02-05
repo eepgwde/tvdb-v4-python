@@ -38,6 +38,7 @@ class JsonConfigHandler(ConfigHandler):
 
   @classmethod
   def get_default(cls, **kwargs):
+    assert "config_file" in cls.defaults0, "Config.defaults() has not been invoked."
     v0 = cls.defaults0["config_file"]
     return { "config_file": v0 }
 

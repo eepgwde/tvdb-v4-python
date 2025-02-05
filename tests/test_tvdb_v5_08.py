@@ -55,7 +55,7 @@ class Test8(unittest.TestCase, Envs0):
     logger.info(f"defaults: {v0}")
 
   ## a
-  # @unittest.expectedFailure
+  @unittest.expectedFailure
   def test_005(self):
     """Should fail with an Exception
 
@@ -66,8 +66,7 @@ class Test8(unittest.TestCase, Envs0):
     If it is too difficult, you can disable the test altogeter expected failure - called config a in the source code comments."""
     self.assertIsNotNone(weavesId)
 
-    home0 = os.environ["HOME"]
-    os.environ["HOME"] = os.environ["TMPDIR"]
+    self.envsTMP()
 
     # Pdb0().trap0 = 6
     ## not a - comment this if you use config a
@@ -75,9 +74,6 @@ class Test8(unittest.TestCase, Envs0):
         ValueError, "no configuration: .+"
       ):
       v0 = Config.handler()
-
-    Pdb0().reset0()
-    os.environ["HOME"] = home0
 
     ## a
     # v0 = Config.handler()
@@ -141,6 +137,9 @@ class Test8(unittest.TestCase, Envs0):
     How to force a handler: netrc by location
     """
     # force netrc - just use my HOME
+    self.envsALT2()
+    Config.defaults()
+
     r0 = Config.instance().factory.get_defaults_run(key0="netrc")
     self.assertIsNotNone(r0)
     logger.info(f"get_defaults_run: {r0}")
@@ -155,10 +154,10 @@ class Test8(unittest.TestCase, Envs0):
     """
     How to force a handler: json by location
     """
-    pwd0 = os.environ["PWD"]
-    os.chdir("tests/home0")
+    self.envsALT()
 
     # force netrc
+    Config.defaults()
     r0 = Config.instance().factory.get_defaults_run(key0="json")
     self.assertIsNotNone(r0)
     logger.info(f"get_defaults_run: {r0}")
@@ -173,13 +172,13 @@ class Test8(unittest.TestCase, Envs0):
     logger.info(f"handler: json: {h0.__class__.__name__}")
     self.assertTrue(h0.__class__.__name__ == 'JsonConfigHandler')
 
-    os.chdir(pwd0)
-
     
   def test_017(self):
     """
     Use the last handler
     """
+    # Don't use this, we are getting a cache.
+    # Config.defaults()
     v0 = Config.instance().handler0()
     self.assertIsNotNone(v0)
     logger.info(f"handler: json: {v0.__class__.__name__}")
@@ -196,6 +195,7 @@ class Test8(unittest.TestCase, Envs0):
 
   def test_019(self):
     """force netrc using location and machine default"""
+    self.envsALT2()
     r0 = Config.instance().factory.get_defaults_run(key0="netrc")
     self.assertIsNotNone(r0)
 
@@ -218,6 +218,7 @@ class Test8(unittest.TestCase, Envs0):
     Force netrc using a classes keyword
     """
     # force netrc, use a singleton list
+    self.envsALT2()
     classes0 = set([NetrcConfigHandler])
     r0 = Config.instance().factory.get_defaults_run(classes=classes0, key0="netrc")
     kwargs0 = { "classes" : classes0 } | r0
@@ -242,6 +243,7 @@ class Test8(unittest.TestCase, Envs0):
     Load the last handler from the instance
     """
     self.assertIsNotNone(weavesId)
+
     v0 = Config.instance().kwargs.get("handler0")
     self.assertIsNotNone(v0)
 

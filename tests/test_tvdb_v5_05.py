@@ -14,9 +14,9 @@ from unittest.mock import patch, MagicMock
 
 import tvdb_v4_unofficial
 
-import pdb
-
 from tvdb_v5_unofficial import TVDB, Config
+
+from tvdb_v5_unofficial import Pdb0
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
@@ -27,9 +27,10 @@ def tvdb_instance():
         MockAuth.return_value.get_token.return_value = "test_token"
 
         # How to initialize for netrc
-        os.environ["TVDB_MACHINE"]="api4.thetvdb.com"
-        v0 = Config.handler(env1="TVDB_MACHINE")
-
+        # You must call this to generate the default config_file default for the handlers.
+        # You would need to call it if you change HOME directory
+        Config.defaults()
+        v0 = Config.handler(machine="api4.thetvdb.com")
         instance = TVDB(config_file=v0)
         return instance
 
