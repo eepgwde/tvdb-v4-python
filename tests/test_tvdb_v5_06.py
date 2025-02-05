@@ -8,6 +8,7 @@ from tvdb_v5_unofficial import __Id__ as weavesId
 from tvdb_v5_unofficial import TVDB, Config
 
 from tvdb_v5_unofficial import Pdb0
+import pdb
 
 from ._Envs0 import Envs0
 
@@ -63,7 +64,7 @@ class Test1(unittest.TestCase, Envs0):
     logger.info(f"defaults: {v0}")
 
   ## a
-  # @unittest.expectedFailure
+  @unittest.expectedFailure
   def test_005(self):
     """Should fail with an Exception
 
@@ -100,7 +101,6 @@ class Test1(unittest.TestCase, Envs0):
 
     self.envsTMP()
 
-    # Pdb0().trap0 = 5
     v0 = Config.handler(config_file=f0)
     self.assertIsNotNone(v0)
 
@@ -208,7 +208,7 @@ class Test1(unittest.TestCase, Envs0):
     os.environ["TVDB_CONFIG"] = "./config.json"
 
     # Pdb0().trap0 = 5
-    v0 = Config.handler()
+    v0 = Config.handler(env0="TVDB_CONFIG")
     self.assertIsNotNone(v0)
     v1 = v0.get("url")
     self.assertIsNotNone(v0)
@@ -229,28 +229,29 @@ class Test1(unittest.TestCase, Envs0):
   def test_019(self):
     """Test the default NETRC location.
 
-    This test changes HOME to a test directory PWD, which is this file's source directory.
+    This test changes HOME to a test directory tests/home1
 
-    It manages to update get a handler, but without a machine name, it can't provide anything.
+    It manages to update get a handler by using the default name.
     """
     self.assertIsNotNone(weavesId)
 
-    # Pdb0().trap0 = 6
     self.envsALT2()
+    Config.defaults()
 
+    # Pdb0().trap0 = 7
     v0 = Config.handler()
     self.assertIsNotNone(v0)
 
     v1 = v0.get("url")
-    self.assertIsNone(v1)
+    self.assertIsNotNone(v1)
     logger.info(f"url: string: {v1}")
 
     v1 = v0.get("apikey")
-    self.assertIsNone(v1)
+    self.assertIsNotNone(v1)
     logger.info(f"apikey: string: {v1}")
 
     v1 = v0.get("pin")
-    self.assertIsNone(v1)
+    self.assertIsNotNone(v1)
     logger.info(f"pin: string: {v1}")
 
     v1 = v0.get("ping")
@@ -267,8 +268,6 @@ class Test1(unittest.TestCase, Envs0):
     self.assertIsNotNone(weavesId)
 
     # Pdb0().trap0 = 5
-
-    # import pdb; pdb.set_trace()
 
     self.envsALT2()
 

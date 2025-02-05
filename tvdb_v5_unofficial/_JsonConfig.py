@@ -17,6 +17,11 @@ class JsonConfigHandler(ConfigHandler):
   kwargs = {}
 
   def _mkname(self):
+    """
+    Called by Config.defaults(), it updates the config_file.
+
+    If you change HOME directory, must called Config.defaults() to update the default.
+    """
     home_dir = os.path.expanduser("~")  # Expand ~ to the user's home directory
     config_dir = os.path.join(home_dir, ".config", self.defaults0["config_dir"])
     config_file_path = os.path.join(config_dir, self.defaults0["name"])
@@ -25,11 +30,11 @@ class JsonConfigHandler(ConfigHandler):
 
   # if defaults0 is passed just revise the defaults0
   def __init__(self, **kwargs):
-    self._mkname()
-    self.kwargs = kwargs
     if "defaults0" in kwargs:
+      self._mkname()
       return
-    self._config = self.load_config(**kwargs)
+    self.kwargs = self.get_default(**kwargs) | kwargs
+    self._config = self._load_config(**self.kwargs)
 
   @classmethod
   def get_default(cls, **kwargs):
@@ -53,13 +58,12 @@ class JsonConfigHandler(ConfigHandler):
         return self._config
     except (FileNotFoundError, json.JSONDecodeError) as e:
       # print(f"Error file: '{f0}': {e}", file=sys.stderr)
-      pdb.set_trace()
       return None
     except Exception as e:
       print(f"An unexpected error occurred: {e}", file=sys.stderr)
       return None
 
-  def load_config(self, **kwargs):
+  def _load_config(self, **kwargs0):
     """Loads configuration, prioritizing environment variable
     then default location.
     Args:
@@ -70,28 +74,21 @@ class JsonConfigHandler(ConfigHandler):
     A dictionary containing the configuration, or None if no config is found.
     """
     Pdb0().trap1 = 5
-    config_file = None
+    # the run defaults were put into the self.kwargs at
+    # construction. Upsert any new ones.
+    kwargs = self.kwargs | kwargs0
+
     # 1. check for a named env0 pointing to a file in the keywords
     if "env0" in kwargs:
-        config_file = os.environ.get(kwargs["env0"], None)
-        if config_file is None:
-            raise NameError(f"No environment variable: {kwargs["env0"]}")
-        v0 = self._load_file(config_file)
-        if v0 is None:
-            raise NameError(f"No file at environment variable: {kwargs["env0"]}={config_file}")
-        return v0
+      f0 = os.environ.get(kwargs["env0"], None)
+      if f0 is None:
+        raise NameError(f"Environment variable lookup failed: {kwargs["env0"]}")
+      kwargs["config_file"]=f0
 
-    # 2. check for a named config file in the keywords
-    if "config_file" in kwargs:
-        config_file = kwargs["config_file"]
-        v0 = self._load_file(config_file)
-        if v0 is None:
-            raise ValueError(f"no configuration: bad ${config_file}")
-        return v0
+    config_file = kwargs["config_file"]
+    assert config_file is not None
 
-    # 3. Check default location ($HOME/.config/tvdb/)
-    v0 = self._load_file(self.defaults0["config_file"])
-
+    v0 = self._load_file(config_file)
     if v0 is not None:
         return v0
 

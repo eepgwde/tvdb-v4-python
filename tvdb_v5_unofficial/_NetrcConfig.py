@@ -5,16 +5,30 @@ import sys
 from ._Defaults0 import Defaults0
 from ._Pdb0 import Pdb0
 
+from operator import itemgetter 
+
 from ._ConfigHandler import ConfigHandler
 
 class NetrcConfigHandler(ConfigHandler):
     netrc0 = None
 
+    ## Dictionary algebra is very good for configurations.
+    #
+    # The upsert operator x | y updates x with matching keys in y.
+    # {} | d0 is {} | d0 ie, return d0
+    # so: latest = old | new
+    # Make a copy of the these defaults0.
+    # On initialization, do any updates because HOME is different.
+    # Then take a copy of the defaults0 and start collecting kwargs.
+    # Not use of ~ and not os.environ["HOME"]"
+    # This allows the the HOME directory to be changed
+    # whilst running.
+    # To to do that, you need to call defaults().
     defaults0 = {
         "name": ".netrc",
         "env0": "NETRC",
         "env1": "NETRC_MACHINE",
-        "config_dir": os.path.expanduser("~"),
+        "config_dir": "~",
         "machine": Defaults0().host0,
         "url_path": "/v4/"
     }
@@ -22,8 +36,13 @@ class NetrcConfigHandler(ConfigHandler):
     kwargs = {}
 
     def _mkname(self):
+        """
+        Update the defaults from within the ctr.
+        """
         config_file_path = os.path.join(
-            self.defaults0["config_dir"],
+            os.path.expanduser(
+                self.defaults0["config_dir"]
+            ),
             self.defaults0["name"])
         self.defaults0["config_file"] = config_file_path
         return config_file_path
@@ -33,44 +52,62 @@ class NetrcConfigHandler(ConfigHandler):
 
         If defaults0 is passed as a keyword, it will not load a config file,
         but just call _mkname to update the defaults0 dictionary.
+        This is the only time load_config() is called.
+        The kwargs are captured for use in the build.
+        Just in case a machine name has been passed in.
+        That function then accumulates any keywords passed.
         """
-        self._mkname()
-        self.kwargs = kwargs
+        # For defaults(), update defaults and return
         if "defaults0" in kwargs:
+            self._mkname()
             return
-        self.load_config(**kwargs)
+        # use a copy of the defaults() now.
+        # delete the environment variables
+        self.kwargs = self.get_default(**kwargs) | kwargs
+        # this will now upsert new kwargs.
+        self._config = self._load_config(**self.kwargs)
 
     @classmethod
     def get_default(cls, **kwargs):
-        v0 = cls.defaults0["config_file"]
-        v1 = cls.defaults0["machine"]
-        return { "config_file": v0, "machine": v1 }
+        """
+        The runtime defaults, a subset of defaults0. When they construct they only need these.
 
-    def load_config(self, **kwargs):
+        No environment variables, just try the defaults and accessories.
+        This uses itemgetter. It is a curried operator. 
+        """
+        Pdb0().trap1 = 7
+        k0s = [ "config_file", "machine", "url_path" ]
+        v0s = itemgetter(*k0s)(cls.defaults0.copy())
+        return dict(zip(k0s, v0s))
+
+
+    def _load_config(self, **kwargs0):
         """
         load from the env0 first, else try the default.
 
         Throws exceptions if there are failures.
         """
+        # this will now upsert new kwargs.
+        kwargs = self.kwargs | kwargs0
         Pdb0().trap1 = 5
-        if "env0" in kwargs:
+
+        if "env0" in kwargs: # look it up and put it in keywords
             f0 = os.environ.get(kwargs["env0"], None)
             if f0 is None:
                 raise NameError(f"No environment variable for env0: {kwargs["env0"]}")
-            kwargs0 = kwargs | self.tag0(f0, "netrc")
+            kwargs["config_file"] = f0
 
-            if not self._hasTyper(kwargs0):
-                raise NameError(f"Not a netrc file env0: {kwargs["env0"]} {f0}")
-            
-            self.netrc0 = netrc.netrc(f0)
-            return self.netrc0
+        # we started with defaults on construction.
+        assert "config_file" in kwargs, "Netrc no config_file in keywords"
 
-        f0 = self.defaults().get("config_file")
-        kwargs0 = kwargs | self.tag0(f0, "netrc")
-        if not self._hasTyper(kwargs0):
-            raise NameError(f"Not a netrc file: {kwargs0["config_file"]}")
+        kwargs1 = self.tag0(kwargs["config_file"], "netrc") | kwargs
+        if not self._hasTyper(kwargs1):
+            raise NameError(f"Not a netrc file: {kwargs1["config_file"]}")
             return None
-        self.netrc0 = netrc.netrc()
+
+        self.netrc0 = netrc.netrc(
+            kwargs1["config_file"]
+        )
         return self.netrc0
 
 
@@ -116,22 +153,33 @@ class NetrcConfigHandler(ConfigHandler):
             h0 = self._env00(**kwargs)
         return h0
 
-    def get(self, key, default0=None, **kwargs):
+    def getURL(self, **kwargs):
+        Pdb0().trap1 = 7
+        return f'http://{kwargs["machine"]}{kwargs["url_path"]}'
 
-        kwargs = kwargs | self.kwargs
+    def get(self, key, default0=None, **kwargs0):
+        """
+        From the netrc file apply some transformations.
 
+        URL has to be manufactured. That is in an override function now.
+        """
+
+        # rightmost has priority, the kwargs is local
+        # this contains the defaults
+        kwargs = self.kwargs | kwargs0
+
+        # lookup the machine
+        h0 = self._host1(**kwargs) # keywords, envs, default
+        if h0 is None:
+            return default0
+
+        kwargs["machine"]=h0
         if key == "url":
-            h0 = self._host1(**kwargs)
-            if h0 is None:
-                return default0
-            return f"http://{h0}{self.defaults0["url_path"]}"
+            return self.getURL(**kwargs)
 
         # login, account, password
 
-        h0 = self._host1(**kwargs)
-        if h0 is None:
-            return default0
-        a1 = self.netrc0.authenticators(h0)
+        a1 = self.netrc0.authenticators(kwargs["machine"])
         if a1 is None:
             return default0
 

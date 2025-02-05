@@ -16,19 +16,6 @@ class ConfigHandler(ABC):
     _hasTyper = lambda o0, d0: o0.hasType(**d0)
 
     @abstractmethod
-    def load_config(self, **kwargs):
-        """
-        Loads configuration data from the specified file.
-
-        Args:
-            config_file (str): Path to the configuration file.
-
-        Returns:
-            dict: A dictionary containing the loaded configuration data.
-        """
-        pass
-
-    @abstractmethod
     def get(self, default0=None, **kwargs):
         return default0
 
