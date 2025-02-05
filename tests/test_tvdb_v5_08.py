@@ -162,7 +162,7 @@ class Test8(unittest.TestCase, Envs0):
     self.assertIsNotNone(r0)
     logger.info(f"get_defaults_run: {r0}")
 
-    logger.info(f"config_file: {r0["config_file"]}")
+    logger.info(f"config_file: {r0['config_file']}")
 
     r0["config_file"] = "./config.json"
 

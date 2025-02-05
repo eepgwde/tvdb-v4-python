@@ -83,7 +83,7 @@ class JsonConfigHandler(ConfigHandler):
     if "env0" in kwargs:
       f0 = os.environ.get(kwargs["env0"], None)
       if f0 is None:
-        raise NameError(f"Environment variable lookup failed: {kwargs["env0"]}")
+        raise NameError(f"Environment variable lookup failed: {kwargs['env0'}")
       kwargs["config_file"]=f0
 
     config_file = kwargs["config_file"]
