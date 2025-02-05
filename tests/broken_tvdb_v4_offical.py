@@ -1,21 +1,31 @@
-from unittest.mock import patch, MagicMock
-import pytest
+## weaves
+# From TVDB, this is their original pytest.
+# It uses a mock and doesn't seem to run anything.
+
 import json
-import sys
+import pytest
 
-import pdb
+from unittest.mock import patch, MagicMock
 
-from tvdb_v5_unofficial import TVDB
+import tvdb_v4_unofficial 
+from tvdb_v5_unofficial import TVDB0
 
 VALID_API_KEY = "valid_api_key"
 VALID_PIN = "valid_pin"
 
+"""
+
+# Refuses to work here.
+
+"""
 
 @pytest.fixture
 def tvdb_instance():
-    with patch("tvdb_v4_official.Auth") as MockAuth:
+    with patch("tvdb_v4_unofficial.Auth") as MockAuth:
         MockAuth.return_value.get_token.return_value = "test_token"
-        instance = TVDB(config_file="./config.json")
+        instance = TVDB0(
+            VALID_API_KEY, VALID_PIN
+        )
         return instance
 
 @patch("urllib.request.urlopen")
@@ -23,8 +33,6 @@ def test_get_artwork(mocked_urlopen, tvdb_instance):
     mock_response_content = json.dumps(
         {"status": "success", "data": {"id": 123, "type": "Poster"}, "links": {}}
     ).encode("utf-8")
-
-    print("message", file=sys.stderr)
 
     mock_response = MagicMock()
     mock_response.read.return_value = mock_response_content
@@ -34,11 +42,3 @@ def test_get_artwork(mocked_urlopen, tvdb_instance):
     artwork = tvdb_instance.get_artwork(123)
     assert artwork["id"] == 123
     assert artwork["type"] == "Poster"
-
-
-
-# -*- coding: utf-8 -*-
-# Local Variables:
-# mode:python
-# python-indent-offset: 2
-# End:

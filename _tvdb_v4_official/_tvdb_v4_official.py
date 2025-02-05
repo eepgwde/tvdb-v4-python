@@ -5,7 +5,6 @@ import urllib.request
 from http import HTTPStatus
 from urllib.error import HTTPError
 
-
 class Auth:
     def __init__(self, url, apikey, pin=""):
         loginInfo = {"apikey": apikey}
@@ -61,6 +60,11 @@ class Request:
 
 
 class Url:
+    """
+    This is the changed class.
+
+    There is no way to override the base_url.
+    """
     def __init__(self):
         self.base_url = "https://api4.thetvdb.com/v4/"
 
@@ -84,12 +88,17 @@ class Url:
 class TVDB:
     def __init__(self, apikey, pin, url0=None):
         """
-        Pass a derived class.
+        Pass a derived class for the URL if given.
+
+        Otherwise build the one from this module.
         """
+
         if url0 is None:
-            self.url = Url(url0)
-        else:
+            self.url = Url()
+        elif isinstance(url0, Url):
             self.url = url0
+        else:
+            raise RuntimeError("bad URL object {url0} passed via url0 on TVDB")
 
         login_url = self.url.construct("login")
         self.auth = Auth(login_url, apikey, pin)
